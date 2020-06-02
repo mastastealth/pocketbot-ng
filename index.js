@@ -32,10 +32,9 @@ bot.on("disconnect", () => {
 bot.on("messageCreate", async (msg) => { // When a message is created
 	main.checkSelf(msg, bot);
 	main.checkSpam(msg, bot);
-	// main.checkToxic(msg, bot);
+	main.checkToxic(msg, bot);
 
-	const private = await bot.getDMChannel(msg.author.id);
-	if (msg.channel.id === private.id) console.log(`[DIRECT MESSAGE] ${msg.author.username}: ${msg.content}`);
+	if (!msg.channel.guild) console.log(`[DIRECT MESSAGE] ${msg.author.username}: ${msg.content}`);
 });
 
 // When a member joins

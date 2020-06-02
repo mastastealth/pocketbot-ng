@@ -69,7 +69,7 @@ module.exports = {
 
 				// Ignore mods/devs
 				// if (!speakerRoles.includes(vars.mod) && !speakerRoles.includes(vars.admin)) {
-					cList.push(userID);
+				cList.push(userID);
 				// }
 
 				// For non-roled folks
@@ -84,7 +84,7 @@ module.exports = {
 
 					// Block Link sharing for an hour
 					if (minJoinedAgo < 60 && (msg.content.includes("http://") || msg.content.includes("https://"))) {
-						msg.delete('Brand new user sharing link.');
+						msg.delete("Brand new user sharing link.");
 						cList.push(userID);
 						bot.createMessage(msg.channel.id, "Unroled users may not share links so soon after joining.");
 					}
@@ -156,55 +156,52 @@ module.exports = {
 		}
 	},
 	checkToxic(msg, bot) {
-		// const toxic = require("./assets/bleep.json"),
-		// 	tuser = bot.servers[vars.chan].members[userID],
-		// 	uRoles = (tuser && tuser.hasOwnProperty("roles")) ? tuser.roles : [];
+		const toxic = require("../assets/bleep.json");
+		const tuser = msg.author.id;
+		const uRoles = msg.member && msg.member.roles.length ? tuser.roles : [];
+		const { vars } = bot.PB;
 
-		// if (!uRoles.includes(vars.mod) && !uRoles.includes(vars.admin)) {
-		// 	for (let x = 0; x < toxic.words.length; x += 1) {
-		// 		if (message.toLowerCase().includes(toxic.words[x])) {
-		// 			let embed = new helper.Embed({
-		// 				author: {
-		// 					name: "Language Detected"
-		// 				},
-		// 				color: 0xFFDC00,
-		// 				description: `:speak_no_evil: <#${channelID}> | <@${userID}> said... \`\`\`${message}\`\`\`\n Should I issue a warning? \n ___`,
-		// 				footer: {
-		// 					text: "(React to this message with a thumbs up or down to warn or dismiss, respectively."
-		// 				}
-		// 			});
+		// Admins/mods are trusted not to be idiots
+		if (!uRoles.includes(vars.mod) && !uRoles.includes(vars.admin)) {
+			for (let x = 0; x < toxic.words.length; x += 1) {
+				if (msg.content.toLowerCase().includes(toxic.words[x])) {
+					const embed = {
+						author: {
+							name: "Language Detected"
+						},
+						color: 0xFFDC00,
+						description: `:speak_no_evil: <#${msg.channel.id}> | <@${tuser}> said... \`\`\`${msg.content}\`\`\`\n Should I issue a warning? \n ___`,
+						footer: {
+							text: "(React to this message with a thumbs up or down to warn or dismiss, respectively."
+						}
+					};
 
-		// 			embed.fields = [
-		// 				{
-		// 					name: "Channel ID:",
-		// 					value: channelID,
-		// 					inline: true
-		// 				},
-		// 				{
-		// 					name: "User ID:",
-		// 					value: userID,
-		// 					inline: true
-		// 				}
-		// 			];
+					embed.fields = [
+						{
+							name: "Channel ID:",
+							value: msg.channel.id,
+							inline: true
+						},
+						{
+							name: "User ID:",
+							value: tuser,
+							inline: true
+						}
+					];
 
-		// 			dio.sendEmbed(embed, command_data, vars.modchan);
-		// 			break;
-		// 		}
-		// 	}
+					bot.createMessage(vars.modchan, { embed });
+					break;
+				}
+			}
 
-		// 	for (let x = 0; x < toxic.nopes.length; x += 1) {
-		// 		if (message.toLowerCase().includes(toxic.nopes[x])) {
-		// 			dio.del( event.d.id, command_data);
-		// 			dio.say(`<@${userID}>, you are going to be muted for the next 10 minutes and banned if you try that again.`, command_data);
-
-		// 			helper.muteID({
-		// 				data: command_data,
-		// 				muteme: userID,
-		// 				time: 10
-		// 			});
-		// 		}
-		// 	}
-		// }
+			for (let x = 0; x < toxic.nopes.length; x += 1) {
+				if (msg.content.toLowerCase().includes(toxic.nopes[x])) {
+					msg.delete();
+					bot.createMessage(msg.channel.id, `<@${tuser}>, you are going to be muted for the next 10 minutes and banned if you try that again.`);
+					module.exports.muteUser(msg, bot, "Toxic language.", 10);
+				}
+			}
+		}
 	},
 	muteUser(msg, bot, warning, time = 2, admin = null) {
 		const { vars } = bot.PB;
@@ -235,11 +232,13 @@ module.exports = {
 		}
 
 		console.info(`Muted: ${msg.author.username} | ${msg.author.id}`);
+		
+		setTimeout(async () => {
+			const private = await msg.author.getDMChannel();
 
-		setTimeout(function() {
 			msg.member.deleteRole(vars.muted);
 			// PM
-			bot.createMessage(msg.author.id, "You have now been unmuted. :tada: Please avoid any issues in the future. Constant mutes may result in strikes.");
+			bot.createMessage(private.id, "You have now been unmuted. :tada: Please avoid any issues in the future. Constant mutes may result in strikes.");
 			// Community
 			bot.createMessage(msg.channel.id, `<@${msg.author.id}> is no longer muted`);
 			// Console
@@ -261,53 +260,53 @@ module.exports = {
 		];
 
 		switch(e.action) {
-			case "strike":
-				embed.color = 0xFF4136;
-				embed.description = `${e.icon} - **${e.admin}** issued a **strike**.`;
-				embed.fields.push({
-					name: "Count:",
-					value: e.strikeCount,
-					inline: true
-				});
+		case "strike":
+			embed.color = 0xFF4136;
+			embed.description = `${e.icon} - **${e.admin}** issued a **strike**.`;
+			embed.fields.push({
+				name: "Count:",
+				value: e.strikeCount,
+				inline: true
+			});
 
-				if (e.strikeCount == 3) {
-					embed.fields.push({
-						name: "BANNED:",
-						value: ":white_check_mark:",
-						inline: true
-					});
-				}
-				break;
-			case "mute":
-				embed.color = 0xFF851B;
-				embed.description = `${e.icon} - **${e.admin}** issued a **mute**.`;
+			if (e.strikeCount == 3) {
 				embed.fields.push({
-					name: "Length in Min:",
-					value: e.muteLen,
+					name: "BANNED:",
+					value: ":white_check_mark:",
 					inline: true
 				});
-				break;
-			case "warn":
-				embed.color = 0xFFDC00,
-				embed.description = `${e.icon} - **${e.admin}** issued a **warning**.`;
-				embed.fields.push({
-					name: "Comment:",
-					value: e.msg
-				});
-				break;
-			case "rename":
-				embed.color = 0xB10DC9;
-				embed.description = `${e.icon} - **${e.admin}** has **renamed** a user.`;
-				embed.fields.push({
-					name: "Formerly:",
-					value: e.prevName,
-					inline: true
-				});
-				break;
-			case "log":
-				embed.color = 0x39CCCC;
-				embed.description = `${e.icon} - **${e.admin}** has **logged an action**.`;
-				break;
+			}
+			break;
+		case "mute":
+			embed.color = 0xFF851B;
+			embed.description = `${e.icon} - **${e.admin}** issued a **mute**.`;
+			embed.fields.push({
+				name: "Length in Min:",
+				value: e.muteLen,
+				inline: true
+			});
+			break;
+		case "warn":
+			embed.color = 0xFFDC00,
+			embed.description = `${e.icon} - **${e.admin}** issued a **warning**.`;
+			embed.fields.push({
+				name: "Comment:",
+				value: e.msg
+			});
+			break;
+		case "rename":
+			embed.color = 0xB10DC9;
+			embed.description = `${e.icon} - **${e.admin}** has **renamed** a user.`;
+			embed.fields.push({
+				name: "Formerly:",
+				value: e.prevName,
+				inline: true
+			});
+			break;
+		case "log":
+			embed.color = 0x39CCCC;
+			embed.description = `${e.icon} - **${e.admin}** has **logged an action**.`;
+			break;
 		}
 
 		if (e.chanID) embed.fields.push({
