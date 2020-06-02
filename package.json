@@ -1,0 +1,19 @@
+{
+  "name": "pocketbot2",
+  "version": "1.0.0",
+  "description": "A whole new pocketbot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": "14.3.0"
+  },
+  "author": "Brian Franco",
+  "license": "MIT",
+  "dependencies": {
+    "challonge-node-ng": "^1.1.0",
+    "dotenv": "^2.0.0",
+    "eris": "^0.13.1"
+  }
+}
