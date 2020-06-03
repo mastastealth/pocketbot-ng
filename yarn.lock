@@ -29,6 +29,11 @@ lodash@^4.17.15:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
 
+node-cron@~1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/node-cron/-/node-cron-1.2.1.tgz#8c90bc5dc723a56289b0786655ab4a1c4cb60368"
+  integrity sha1-jJC8XccjpWKJsHhmVatKHEy2A2g=
+
 opusscript@^0.0.7:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/opusscript/-/opusscript-0.0.7.tgz#7dd7ec55b302d26bf588e6fc3feb090b8c7da856"
@@ -82,3 +87,8 @@ ws@^7.2.1:
   version "7.3.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.3.0.tgz#4b2f7f219b3d3737bc1a2fbf145d825b94d38ffd"
   integrity sha512-iFtXzngZVXPGgpTlP1rBqsUK82p9tKqsWRPg5L56egiljujJT3vGAYnHANvFxBieXrTFavhzhxW52jnaWV+w2w==
+
+yuuko@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/yuuko/-/yuuko-2.0.0.tgz#c4267b89491f536b2af2a75ab4bdaa02ca54ae45"
+  integrity sha512-K9ZCwZkoLABHFEkGA7WKYnulMCdeEgk0rJYUcs/V5QtMfuKWYGWAizewlbnPfk6QkZCOBZ86Vu4L/NAm708QHQ==

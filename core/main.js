@@ -1,8 +1,49 @@
+const cron = require("node-cron");
+
 const cList = [];
 const cMap = {};
 const spammer = [];
 
 module.exports = {
+	checkPresence(user, bot) {
+		const game = user.game;
+		const fromRoles = user.roles.length ? user.roles : [];
+		const more = user.activities;
+		const { vars: x } = bot;
+
+		if (process.env.LOCALTEST) return false;
+		
+		// Someone goes offline
+		if (user.state === "offline") {
+		// Check if they are on ready list
+			if (fromRoles.includes(x.lfg)) user.removeRole(x.lfg, "Went offline, removed LFG");
+		}
+
+		// Someone is playing/streaming (?) the game
+		if (game) {
+			let gameName = game.name.toLowerCase();
+			// streamer = ( game.hasOwnProperty("url") ) ?  game.url.substr(game.url.lastIndexOf("/") + 1) : null;
+			let otherJunk = (more) ? more.map((a) => { return a.name === "Tooth and Tail" ? "tnt" : false; }) : [];
+
+			// Check for all known game names and stream stuff 
+			if ( gameName.match(/tooth\s?(and|&)\s?tail/gi) || gameName.includes("tnt") || otherJunk.includes("tnt") ) {
+				// And if the user is roleless, or not a Recruit OR Veteran
+				if (
+					!fromRoles.length
+					|| (!fromRoles.includes(x.noob) && !fromRoles.includes(x.member))
+				) user.addRole(x.noob, "Add recruit to new player");
+				// Add to LFG
+				user.addRole(x.lfg, "Went offline, removed LFG");
+
+			} else {
+			// If he's not playing/streaming it, and has LFG, remove
+				if (fromRoles.includes(x.lfg)) user.removeRole(x.lfg, "Not playing TnT, removed LFG");
+			}
+		} else {
+		// Or if he stopped playing/streaming, remove LFG
+			if (fromRoles.includes(x.lfg)) user.removeRole(x.lfg, "Not playing TnT, removed LFG");
+		}
+	},
 	countdown({ bot, msg, count, txt = false }) {
 		const t = txt || msg.content;
 		const chan = msg.channel.id;
@@ -158,7 +199,7 @@ module.exports = {
 	checkToxic(msg, bot) {
 		const toxic = require("../assets/bleep.json");
 		const tuser = msg.author.id;
-		const uRoles = msg.member && msg.member.roles.length ? tuser.roles : [];
+		const uRoles = msg.member && msg.member.roles.length ? msg.member.roles : [];
 		const { vars } = bot.PB;
 
 		// Admins/mods are trusted not to be idiots
@@ -316,5 +357,36 @@ module.exports = {
 
 		try { e.bot.createMessage(vars.history, { embed }); }
 		catch(e) { console.error(e); }
+	},
+	pbcCron(bot) {
+		let tourneyHrs = [13,17,22];
+		const { vars } = bot.PB;
+
+		cron.schedule(`0 0 ${tourneyHrs[0]},${tourneyHrs[1]},${tourneyHrs[2]} * * 1`, function() {
+			console.log("Creating Cup.", "OK");
+			const cmd = bot.commands.filter(cmd => cmd.names.includes("makecup"))[0];
+			cmd.execute(null, null, { client: bot });
+
+			const time = new Date();
+			let who = vars.au;
+			if (time.getHours() === tourneyHrs[1]) who = vars.eu;
+			if (time.getHours() === tourneyHrs[2]) who = vars.na;
+
+			bot.createMessage(vars.memchan, `Attention <@&${vars.lfg}>, <@&${who}>, or those wanting to, a new Pocketbot Cup has just opened signups in <#${vars.pbcup}>!`);
+		});
+
+		cron.schedule(`0 45 ${tourneyHrs[0]},${tourneyHrs[1]},${tourneyHrs[2]} * * 1`, function() {
+			console.log("Reminding about Cup.", "OK");
+			const cmd = bot.commands.filter(cmd => cmd.names.includes("checkinremind"))[0];
+			cmd.execute(null, null, { client: bot });
+
+			bot.createMessage(vars.memchan, `For anyone <@&${vars.lfg}> or just hanging around, there is a Pocketbot Cup currently open for signups, it starts in 15 minutes over in <#${vars.pbcup}>. Go win some ${vars.emojis.wip}!`);
+		});
+
+		cron.schedule(`59 59 ${tourneyHrs[0]},${tourneyHrs[1]},${tourneyHrs[2]} * * 1`, function() {
+			console.log("Starting Cup.", "OK");
+			const cmd = bot.commands.filter(cmd => cmd.names.includes("startcup"))[0];
+			cmd.execute(null, null, { client: bot });
+		});
 	}
 };
