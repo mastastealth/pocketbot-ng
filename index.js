@@ -2,8 +2,7 @@
 // Libraries
 // ===================================
 require("dotenv").config();
-const { Client } = require("yuuko");
-const path = require("path");
+const Eris = require("eris");
 
 // ===================================
 // Modules
@@ -11,19 +10,29 @@ const path = require("path");
 const main = require("./core/main");
 const vars = require("./core/vars");
 
-const bot = new Client({
-	token: process.env.TOKEN,
-	description: "Pocketbot 2.0 - powered by Eris + Yuuko",
-	owner: "Mastastealth",
-	prefix: "d!"
-});
+const bot = new Eris.CommandClient(
+	process.env.TOKEN, {}, 
+	{
+		description: "Pocketbot NG - powered by Eris",
+		owner: "Mastastealth",
+		prefix: process.env.LOCALTEST ? "d!" : "!"
+	}
+);
 
 bot.PB = {
-	vars
+	vars,
+	main
 };
 
+const tourney = require("./cmds/tourney")(bot);
+const admin = require("./cmds/admin")(bot);
+
+// ===================================
+// Bot Events
+// ===================================
 bot.on("ready", () => {
-	console.log("Bot logged in successfully.");
+	console.log(`Bot logged in ${process.env.LOCALTEST ? "locally" : "online"} successfully.`);
+	console.log(Object.keys(bot.commands));
 });
 
 bot.on("disconnect", () => {
@@ -34,8 +43,8 @@ bot.on("presenceUpdate", (user, old) => {
 	main.checkPresence(user, bot, old);
 });
 
-// On every message we do some checks
-bot.on("messageCreate", async (msg) => { // When a message is created
+bot.on("messageCreate", async (msg) => {
+	// On every message we do some checks
 	main.checkSelf(msg, bot);
 	main.checkSpam(msg, bot);
 	main.checkToxic(msg, bot);
@@ -43,8 +52,8 @@ bot.on("messageCreate", async (msg) => { // When a message is created
 	if (!msg.channel.guild) console.log(`[DIRECT MESSAGE] ${msg.author.username}: ${msg.content}`);
 });
 
-// When a member joins
 bot.on("guildMemberAdd", (guild, member) => {
+	// When a member joins the server
 	console.log(`New User: ${member.username} aka ${member.nick} | ${member.id}`);
 	if (process.env.LOCALTEST) return false;
 
@@ -55,11 +64,23 @@ bot.on("guildMemberAdd", (guild, member) => {
 The Recruit role is given to those who own the game. If the bot detects you playing the game, you should be auto-roled. If not, just let a moderator know. `);
 });
 
-// PBC Cron Jobs
+// ===================================
+// Extra Pocketbot Tasks
+// ===================================
 main.pbcCron(bot);
+main.lucille(bot); // Twitter
 
+// ===================================
+// Get all other commands and start!
+// ===================================
 try {
-	bot.addCommandDir(path.join(__dirname, "cmds")).connect();
+	tourney.register();
+	admin.register();
+	// TODO - bank.register();
+	// TODO - info.register();
+	// TODO - quotes.register();
+
+	bot.connect();
 } catch(e) {
 	console.error(e);
 }
