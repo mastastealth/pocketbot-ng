@@ -1,5 +1,5 @@
 {
-  "name": "pocketbot2",
+  "name": "pocketbot-ng",
   "version": "1.0.0",
   "description": "A whole new pocketbot",
   "main": "index.js",
@@ -9,10 +9,11 @@
   "author": "Brian Franco",
   "license": "MIT",
   "dependencies": {
-    "challonge-node-ng": "^1.1.0",
+    "challonge-node-ng": "^2.0.0",
+    "common-tags": "^1.8.0",
     "dotenv": "^2.0.0",
     "eris": "^0.13.1",
     "node-cron": "~1.2.1",
-    "yuuko": "^2.0.0"
+    "twit": "~2.2.5"
   }
 }
