@@ -9,6 +9,7 @@ const Eris = require("eris");
 // ===================================
 const main = require("./core/main");
 const vars = require("./core/vars");
+// const fb = require("../core/firebase");
 
 const bot = new Eris.CommandClient(
 	process.env.TOKEN, {}, 
@@ -19,13 +20,12 @@ const bot = new Eris.CommandClient(
 	}
 );
 
+// Add some global PB-specific properties to global bot object.
 bot.PB = {
 	vars,
-	main
+	main,
+	// fb
 };
-
-const tourney = require("./cmds/tourney")(bot);
-const admin = require("./cmds/admin")(bot);
 
 // ===================================
 // Bot Events
@@ -36,32 +36,20 @@ bot.on("ready", () => {
 });
 
 bot.on("disconnect", () => {
-	console.log("Disconnected from Discord...", "Error");
+	console.error("Disconnected from Discord...");
 });
 
 bot.on("presenceUpdate", (user, old) => {
 	main.checkPresence(user, bot, old);
 });
 
+// On every message we do some checks
 bot.on("messageCreate", async (msg) => {
-	// On every message we do some checks
 	main.checkSelf(msg, bot);
 	main.checkSpam(msg, bot);
 	main.checkToxic(msg, bot);
 
 	if (!msg.channel.guild) console.log(`[DIRECT MESSAGE] ${msg.author.username}: ${msg.content}`);
-});
-
-bot.on("guildMemberAdd", (guild, member) => {
-	// When a member joins the server
-	console.log(`New User: ${member.username} aka ${member.nick} | ${member.id}`);
-	if (process.env.LOCALTEST) return false;
-
-	const from = `<@${member.id}>`;
-
-	bot.createMessage(`Glad you found the Pocketwatch community, ${from}, we hope you enjoy your stay. :)>\n\n If you ever need my help, feel free to type in \`!help\` in any channel or here in a private message. :thumbsup:
-
-The Recruit role is given to those who own the game. If the bot detects you playing the game, you should be auto-roled. If not, just let a moderator know. `);
 });
 
 // ===================================
@@ -73,6 +61,11 @@ main.lucille(bot); // Twitter
 // ===================================
 // Get all other commands and start!
 // ===================================
+
+// Import command groups
+const tourney = require("./cmds/tourney")(bot);
+const admin = require("./cmds/admin")(bot);
+
 try {
 	tourney.register();
 	admin.register();

@@ -2,12 +2,13 @@ const fs = require("fs");
 const path = require("path");
 
 const emotes = function() {
-	let _emotes = [],
-		_gifemotes = [];
+	const _emotes = [];
+	const	_gifemotes = [];
 
-	fs.readdir(path.join(__dirname, "..", "emoji"), function(err, files){
+	fs.readdir(path.join(__dirname, "..", "emoji"), (err, files) => {
 		if (err) return console.error(err);
-		for (let i = 0; i < files.length; i++){
+
+		for (let i = 0; i < files.length; i++) {
 			if (path.parse(files[i]).ext === ".gif") {
 				_gifemotes.push(path.parse(files[i]).name);
 			} else {
