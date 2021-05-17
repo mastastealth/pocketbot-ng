@@ -23,7 +23,7 @@ module.exports = {
 		const game = user.game;
 		const fromRoles = user.roles.length ? user.roles : [];
 		const more = user.activities;
-		const { vars: x } = bot;
+		const { vars: x } = bot.PB;
 
 		if (process.env.LOCALTEST) return false;
 		
