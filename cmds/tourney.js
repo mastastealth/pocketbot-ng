@@ -344,10 +344,10 @@ module.exports = (bot) => {
 		}
 	}
 
-	async function addPlayer(data, cid, tid = null, tRole = null) {
+	async function addPlayer(msg, cid, tid = null, tRole = null) {
 		const stamp = process.env.LOCALTEST ? `__${Date.now()}` : false,
 			u = {
-				"name": `${data.user}${(stamp) ? stamp : ""}`,
+				"name": `${msg.author.username}${(stamp) ? stamp : ""}`,
 				"misc": `${msg.author.id}`
 			};
 
@@ -359,7 +359,7 @@ module.exports = (bot) => {
 
 		// If this is a custom tournament, require a Challonge account
 		if (tid && !cid) {
-			dio.say(`<@${data.userID}>, you're going to need a Challonge account registered to join a custom tournament! Please use \`!challonge username\` to register your account, then you can remove/readd your :thumbsup: to try again.`, data, x.tourney);
+			msg.channel.createMessage(`<@${msg.author.id}>, you're going to need a Challonge account registered to join a custom tournament! Please use \`!challonge username\` to register your account, then you can remove/readd your :thumbsup: to try again.`);
 			return false;
 		}
 
@@ -372,42 +372,38 @@ module.exports = (bot) => {
 			// Ignore the rest if custom tournament 
 			if (tid) {
 				// Add custom role
-				if (tRole) data.bot.addToRole({
-					serverID: x.chan,
-					userID: data.userID,
+				if (tRole) msg.author.addRole({
 					roleID: tRole
 				});
 
-				dio.say(`<@${data.userID}> has entered the tournament! ${(cid) ? ":comet:" : ""}`, data, tChan);
+				msg.channel.createMessage(`<@${msg.author.id}> has entered the tournament! ${(cid) ? ":comet:" : ""}`);
 				return false;
 			}
 
 			tCount++;
-			tPlayers[`${data.userID}`] = player.id; // Store a local list of players 
+			tPlayers[`${msg.author.id}`] = player.id; // Store a local list of players 
 
-			data.bot.addToRole({
-				serverID: x.chan,
-				userID: data.userID,
+			msg.author.addRole({
 				roleID: x.competitor
-			}, function (err, resp) {
-				if (err) console.error(`${err} | ${resp}`);
+			}).catch((e) => {
+				console.error(e);
 			});
 
 			if (tCount >= 17) {
-				dio.say(`<@${data.userID}> is on standby! ${(cid) ? ":comet:" : ""}`, data, tChan);
+				msg.channel.createMessage(`<@${msg.author.id}> is on standby! ${(cid) ? ":comet:" : ""}`);
 			} else {
-				dio.say(`<@${data.userID}> has entered the Cup! ${(cid) ? ":comet:" : ""}`, data, tChan);
+				msg.channel.createMessage(`<@${msg.author.id}> has entered the Cup! ${(cid) ? ":comet:" : ""}`);
 			}
 
 			// Check if we've hit our player limit 
 			if (tCount === 16) {
 				setTimeout(() => {
-					dio.say(":trophy: We have now reached the maximum amount of participants! I will announce check-ins later on.", data, tChan);
+					msg.channel.createMessage(":trophy: We have now reached the maximum amount of participants! I will announce check-ins later on.");
 				}, 1000);
 			}
 		} catch (e) {
 			console.error(e);
-			dio.say(`🕑 An error occurred adding participant to tournament ${cTourneyLocal}. :frowning: \`\`\`${e}\`\`\``, data, tChan);
+			msg.channel.createMessage(`🕑 An error occurred adding participant to tournament ${cTourneyLocal}. :frowning: \`\`\`${e}\`\`\``);
 		}
 	}
 
@@ -558,7 +554,10 @@ module.exports = (bot) => {
 		msg?.delete();
 		makeTourney();
 	}, {
-		description: "Creates a new Pocketbot Cup"
+		description: "Creates a new Pocketbot Cup",
+		requirements: {
+			roleIDs: [x.admin, x.adminbot, x.combot]
+		}
 	});
 
 	bot.registerCommand("startcup", (msg, args) => {
@@ -630,7 +629,7 @@ module.exports = (bot) => {
 		// Otherwise, if we're under 16 participants, add to tournament
 		if ((tCount < 16 && !tid) || tid) {
 			const tRole = data?.tRole || null;
-			addPlayer(data, cid, tid, tRole);
+			addPlayer(msg, cid, tid, tRole);
 		} else {
 			msg.channel.createMessage("🕑 The tournament has reached the maximum number of entries. Hope to see you next week!");
 		}
@@ -670,7 +669,7 @@ module.exports = (bot) => {
 		// Check if we're looking for a score from this person anyway
 		if (process.env.LOCALTEST && !tPlayers.hasOwnProperty(msg.author.id)) {
 			if (Object.values(tPlayers).length > 0) {
-				msg.channel.createMessage("🕑 Uhm...you don't seem to be in the tournament, so I'm going to go ahead and ignore you. :sweat_smile:", data.userID);
+				msg.channel.createMessage("🕑 Uhm...you don't seem to be in the tournament, so I'm going to go ahead and ignore you. :sweat_smile:");
 				return false;
 			}
 		}
