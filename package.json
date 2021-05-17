@@ -12,8 +12,8 @@
     "challonge-node-ng": "^2.0.0",
     "common-tags": "^1.8.0",
     "dotenv": "^2.0.0",
-    "eris": "^0.13.1",
+    "eris": "^0.15.1",
     "node-cron": "~1.2.1",
-    "twit": "~2.2.5"
+    "twit": "~2.2.11"
   }
 }
