@@ -4,7 +4,7 @@ module.exports = (bot) => {
 	// const STRIKE_COUNT = 3;
 
 	bot.registerCommand("say", (msg) => {
-		bot.createMessage(x.chan, msg.replace("!say ", ""));
+		bot.createMessage(x.chan, msg.content.replace("!say ", ""));
 	}, {
 		description: "Allows admin to speak as PB",
 		requirements: {

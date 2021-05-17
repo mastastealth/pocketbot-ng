@@ -638,7 +638,9 @@ module.exports = (bot) => {
 	}, {
 		description: "Adds player to tournament",
 		aliases: ["!signin", "!singup"]
-	});
+	}, {
+    description: "Signs up for a currently running Pocketbot Cup"
+  });
 
 	bot.registerCommand("checkin", (msg)=> {
     msg.delete();
@@ -658,6 +660,8 @@ module.exports = (bot) => {
       console.error(e);
       msg.channel.createMessage("🕑 There was an error checking in. Check-in opens 15 minutes before the tournament starts.");
     });
+  }, {
+    description: "Checks in to a currently running Pocketbot Cup"
   });
 
 	bot.registerCommand("score", (msg, args)=> {
@@ -677,6 +681,8 @@ module.exports = (bot) => {
     updateScore(msg, args);
     
     // TODO - Restore the rest when we have file uploading again
+  }, {
+    description: "Submits a score for a currently running Pocketbot Cup"
   });
 
  bot.registerCommand("dq", (msg, args)=> {
@@ -698,6 +704,11 @@ module.exports = (bot) => {
 
 	deletePlayer(msg, tPlayers[player], player);
 	checkRound(msg);
+ }, {
+  description: "Removes a user from a currently running Pocketbot Cup",
+  requirements: {
+    roleIDs: [x.admin, x.adminbot, x.combot]
+  }
  });
   
 	// TODO - bot.registerCommand("signout", (msg)=> {});
