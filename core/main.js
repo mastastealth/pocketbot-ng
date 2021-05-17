@@ -26,10 +26,10 @@ module.exports = {
 		const { vars: x } = bot.PB;
 
 		if (process.env.LOCALTEST) return false;
-		
+
 		// Someone goes offline
 		if (user.state === "offline") {
-		// Check if they are on ready list
+			// Check if they are on ready list
 			if (fromRoles.includes(x.lfg)) user.removeRole(x.lfg, "Went offline, removed LFG");
 		}
 
@@ -40,7 +40,7 @@ module.exports = {
 			let otherJunk = (more) ? more.map((a) => { return a.name === "Tooth and Tail" ? "tnt" : false; }) : [];
 
 			// Check for all known game names and stream stuff 
-			if ( gameName.match(/tooth\s?(and|&)\s?tail/gi) || gameName.includes("tnt") || otherJunk.includes("tnt") ) {
+			if (gameName.match(/tooth\s?(and|&)\s?tail/gi) || gameName.includes("tnt") || otherJunk.includes("tnt")) {
 				// And if the user is roleless, or not a Recruit OR Veteran
 				if (
 					!fromRoles.length
@@ -50,11 +50,11 @@ module.exports = {
 				user.addRole(x.lfg, "Went offline, removed LFG");
 
 			} else {
-			// If he's not playing/streaming it, and has LFG, remove
+				// If he's not playing/streaming it, and has LFG, remove
 				if (fromRoles.includes(x.lfg)) user.removeRole(x.lfg, "Not playing TnT, removed LFG");
 			}
 		} else {
-		// Or if he stopped playing/streaming, remove LFG
+			// Or if he stopped playing/streaming, remove LFG
 			if (fromRoles.includes(x.lfg)) user.removeRole(x.lfg, "Not playing TnT, removed LFG");
 		}
 	},
@@ -63,25 +63,25 @@ module.exports = {
 		const chan = msg.channel.id;
 
 		if (count > -1) {
-			setTimeout(function() {
+			setTimeout(function () {
 				if (t.includes("🕗")) { // 8 to 10
-					bot.editMessage(chan, msg.id, t.replace("🕗","🕙"));
-					module.exports.countdown({ bot, msg, count: count - 1, txt: t.replace("🕗","🕙") });
+					bot.editMessage(chan, msg.id, t.replace("🕗", "🕙"));
+					module.exports.countdown({ bot, msg, count: count - 1, txt: t.replace("🕗", "🕙") });
 				}
 				else if (t.includes("🕕")) { // 6 to 8
-					bot.editMessage(chan, msg.id, t.replace("🕕","🕗"));
-					module.exports.countdown({ bot, msg, count: count - 1, txt: t.replace("🕕","🕗") });
+					bot.editMessage(chan, msg.id, t.replace("🕕", "🕗"));
+					module.exports.countdown({ bot, msg, count: count - 1, txt: t.replace("🕕", "🕗") });
 				}
 				else if (t.includes("🕓")) { // 4 to 6
-					bot.editMessage(chan, msg.id, t.replace("🕓","🕕"));
-					module.exports.countdown({ bot, msg, count: count - 1, txt: t.replace("🕓","🕕") });
+					bot.editMessage(chan, msg.id, t.replace("🕓", "🕕"));
+					module.exports.countdown({ bot, msg, count: count - 1, txt: t.replace("🕓", "🕕") });
 				}
 				else if (t.includes("🕑")) { // 2 to 4
-					bot.editMessage(chan, msg.id, t.replace("🕑","🕓"));
-					module.exports.countdown({ bot, msg, count: count - 1, txt: t.replace("🕑","🕓") });
+					bot.editMessage(chan, msg.id, t.replace("🕑", "🕓"));
+					module.exports.countdown({ bot, msg, count: count - 1, txt: t.replace("🕑", "🕓") });
 				} else { //10 to 12
-					bot.editMessage(chan, msg.id, t.replace("🕙","💥"));
-					module.exports.countdown({ bot, msg, count: count - 1, txt: t.replace("🕙","💥") });
+					bot.editMessage(chan, msg.id, t.replace("🕙", "💥"));
+					module.exports.countdown({ bot, msg, count: count - 1, txt: t.replace("🕙", "💥") });
 				}
 			}, 2000);
 		} else {
@@ -109,7 +109,7 @@ module.exports = {
 		if (msg.author.id !== bot.user.id && msg.author.id !== vars.mbot) {
 			const speaker = msg.author.id;
 			const speakerRoles = msg.member && msg.member.roles.length ? msg.member.roles : [];
-			const minJoinedAgo = speaker && speaker.createdAt ? Math.floor( ((Date.now() - speaker.createdAt)/1000)/60 ) : 0;
+			const minJoinedAgo = speaker && speaker.createdAt ? Math.floor(((Date.now() - speaker.createdAt) / 1000) / 60) : 0;
 			const chanID = msg.channel.id;
 			const userID = msg.author.id;
 
@@ -158,9 +158,9 @@ module.exports = {
 					if (!spammer.includes(userID)) {
 						// Record warning, auto delete after 2 min. for noobs, 30s for roled
 						spammer.push(userID);
-						const time = (speakerRoles.length) ? 30000 : 1000*60*2;
-						setTimeout( function() {
-							spammer.splice( spammer.indexOf(userID) , 1);
+						const time = (speakerRoles.length) ? 30000 : 1000 * 60 * 2;
+						setTimeout(function () {
+							spammer.splice(spammer.indexOf(userID), 1);
 						}, time);
 
 						// Cut channel messages in half to allow a response
@@ -169,8 +169,8 @@ module.exports = {
 							cMap[chanID].pop();
 						}
 
-						cList.splice( cList.indexOf(userID) , 1);
-						cList.splice( cList.indexOf(userID) , 1);
+						cList.splice(cList.indexOf(userID), 1);
+						cList.splice(cList.indexOf(userID), 1);
 
 						// Warning
 						const v = [
@@ -186,9 +186,9 @@ module.exports = {
 						module.exports.muteUser(msg, bot, "Did not heed spam warning.");
 
 						// Clear out prev. spam counts
-						cList.splice( cList.indexOf(userID) , 1);
-						cList.splice( cList.indexOf(userID) , 1);
-						cList.splice( cList.indexOf(userID) , 1);
+						cList.splice(cList.indexOf(userID), 1);
+						cList.splice(cList.indexOf(userID), 1);
+						cList.splice(cList.indexOf(userID), 1);
 					}
 				} else if ((c > 4 && !speakerRoles.length) || (c > 6 && speakerRoles.length)) {
 					bot.createMessage(`<@${userID}>, you are going to be muted for the next 2 minutes. Please adjust your chat etiquette.`);
@@ -197,15 +197,15 @@ module.exports = {
 					module.exports.muteUser(msg, bot, "Too many consecutive messages.");
 
 					// Clear out prev. spam counts
-					cList.splice( cList.indexOf(userID) , 1);
-					cList.splice( cList.indexOf(userID) , 1);
-					cList.splice( cList.indexOf(userID) , 1);
-					cList.splice( cList.indexOf(userID) , 1);
+					cList.splice(cList.indexOf(userID), 1);
+					cList.splice(cList.indexOf(userID), 1);
+					cList.splice(cList.indexOf(userID), 1);
+					cList.splice(cList.indexOf(userID), 1);
 				}
 
 				// Trim spam list every 2s
-				setTimeout( function() {
-					cList.splice( cList.indexOf(userID) , 1);
+				setTimeout(function () {
+					cList.splice(cList.indexOf(userID), 1);
 				}, 2000);
 			}
 		}
@@ -287,7 +287,7 @@ module.exports = {
 		}
 
 		console.info(`Muted: ${msg.author.username} | ${msg.author.id}`);
-		
+
 		setTimeout(async () => {
 			const private = await msg.author.getDMChannel();
 
@@ -314,54 +314,54 @@ module.exports = {
 			}
 		];
 
-		switch(e.action) {
-		case "strike":
-			embed.color = 0xFF4136;
-			embed.description = `${e.icon} - **${e.admin}** issued a **strike**.`;
-			embed.fields.push({
-				name: "Count:",
-				value: e.strikeCount,
-				inline: true
-			});
-
-			if (e.strikeCount == 3) {
+		switch (e.action) {
+			case "strike":
+				embed.color = 0xFF4136;
+				embed.description = `${e.icon} - **${e.admin}** issued a **strike**.`;
 				embed.fields.push({
-					name: "BANNED:",
-					value: ":white_check_mark:",
+					name: "Count:",
+					value: e.strikeCount,
 					inline: true
 				});
-			}
-			break;
-		case "mute":
-			embed.color = 0xFF851B;
-			embed.description = `${e.icon} - **${e.admin}** issued a **mute**.`;
-			embed.fields.push({
-				name: "Length in Min:",
-				value: e.muteLen,
-				inline: true
-			});
-			break;
-		case "warn":
-			embed.color = 0xFFDC00,
-			embed.description = `${e.icon} - **${e.admin}** issued a **warning**.`;
-			embed.fields.push({
-				name: "Comment:",
-				value: e.msg
-			});
-			break;
-		case "rename":
-			embed.color = 0xB10DC9;
-			embed.description = `${e.icon} - **${e.admin}** has **renamed** a user.`;
-			embed.fields.push({
-				name: "Formerly:",
-				value: e.prevName,
-				inline: true
-			});
-			break;
-		case "log":
-			embed.color = 0x39CCCC;
-			embed.description = `${e.icon} - **${e.admin}** has **logged an action**.`;
-			break;
+
+				if (e.strikeCount == 3) {
+					embed.fields.push({
+						name: "BANNED:",
+						value: ":white_check_mark:",
+						inline: true
+					});
+				}
+				break;
+			case "mute":
+				embed.color = 0xFF851B;
+				embed.description = `${e.icon} - **${e.admin}** issued a **mute**.`;
+				embed.fields.push({
+					name: "Length in Min:",
+					value: e.muteLen,
+					inline: true
+				});
+				break;
+			case "warn":
+				embed.color = 0xFFDC00,
+					embed.description = `${e.icon} - **${e.admin}** issued a **warning**.`;
+				embed.fields.push({
+					name: "Comment:",
+					value: e.msg
+				});
+				break;
+			case "rename":
+				embed.color = 0xB10DC9;
+				embed.description = `${e.icon} - **${e.admin}** has **renamed** a user.`;
+				embed.fields.push({
+					name: "Formerly:",
+					value: e.prevName,
+					inline: true
+				});
+				break;
+			case "log":
+				embed.color = 0x39CCCC;
+				embed.description = `${e.icon} - **${e.admin}** has **logged an action**.`;
+				break;
 		}
 
 		if (e.chanID) embed.fields.push({
@@ -369,19 +369,19 @@ module.exports = {
 			value: `<#${e.chanID}>`
 		});
 
-		try { 
-			e.bot.createMessage(vars.history, { embed }); 
-		} catch(e) { 
-			console.error(e); 
+		try {
+			e.bot.createMessage(vars.history, { embed });
+		} catch (e) {
+			console.error(e);
 		}
 	},
 	pbcCron(bot) {
-		let tourneyHrs = [13,17,22];
+		let tourneyHrs = [13, 17, 22];
 		const { vars } = bot.PB;
 
-		cron.schedule(`0 0 ${tourneyHrs[0]},${tourneyHrs[1]},${tourneyHrs[2]} * * 1`, function() {
+		cron.schedule(`0 0 ${tourneyHrs[0]},${tourneyHrs[1]},${tourneyHrs[2]} * * 1`, function () {
 			console.log("Creating Cup.", "OK");
-			const cmd = bot.commands.filter(cmd => cmd.names.includes("makecup"))[0];
+			const cmd = Object.values(bot.commands).filter(cmd => cmd.label.includes("makecup"))[0];
 			cmd.execute(null, null, { client: bot });
 
 			const time = new Date();
@@ -392,17 +392,17 @@ module.exports = {
 			bot.createMessage(vars.memchan, `Attention <@&${vars.lfg}>, <@&${who}>, or those wanting to, a new Pocketbot Cup has just opened signups in <#${vars.pbcup}>!`);
 		});
 
-		cron.schedule(`0 45 ${tourneyHrs[0]},${tourneyHrs[1]},${tourneyHrs[2]} * * 1`, function() {
+		cron.schedule(`0 45 ${tourneyHrs[0]},${tourneyHrs[1]},${tourneyHrs[2]} * * 1`, function () {
 			console.log("Reminding about Cup.", "OK");
-			const cmd = bot.commands.filter(cmd => cmd.names.includes("checkinremind"))[0];
+			const cmd = Object.values(bot.commands).filter(cmd => cmd.label.includes("checkinremind"))[0];
 			cmd.execute(null, null, { client: bot });
 
 			bot.createMessage(vars.memchan, `For anyone <@&${vars.lfg}> or just hanging around, there is a Pocketbot Cup currently open for signups, it starts in 15 minutes over in <#${vars.pbcup}>. Go win some ${vars.emojis.wip}!`);
 		});
 
-		cron.schedule(`59 59 ${tourneyHrs[0]},${tourneyHrs[1]},${tourneyHrs[2]} * * 1`, function() {
+		cron.schedule(`59 59 ${tourneyHrs[0]},${tourneyHrs[1]},${tourneyHrs[2]} * * 1`, function () {
 			console.log("Starting Cup.", "OK");
-			const cmd = bot.commands.filter(cmd => cmd.names.includes("startcup"))[0];
+			const cmd = Object.values(bot.commands).filter(cmd => cmd.label.includes("startcup"))[0];
 			cmd.execute(null, null, { client: bot });
 		});
 	},
@@ -410,10 +410,10 @@ module.exports = {
 		const { vars: x } = bot.PB;
 		if (!stream) return false;
 
-		stream.on("tweet", function(tweet) {
+		stream.on("tweet", function (tweet) {
 			//If Tracked User
 			if (
-				watchList.includes(tweet.user.id_str) 
+				watchList.includes(tweet.user.id_str)
 				&& tweet.in_reply_to_status_id === null
 			) {
 				const lT = {
@@ -423,22 +423,22 @@ module.exports = {
 					id: tweet.id_str
 				};
 				let face = "";
-	
+
 				console.log(`${lT.user} | ${lT.uid} tweeted.`);
-	
-				switch(lT.uid) {
-				case 19382657:
-					face = x.emojis.schatz;
-					break;
-				case 3271155122:
-					face = x.emojis.hopper;
-					break;
+
+				switch (lT.uid) {
+					case 19382657:
+						face = x.emojis.schatz;
+						break;
+					case 3271155122:
+						face = x.emojis.hopper;
+						break;
 				}
-	
+
 				// Change channel if TnT
 				let chan = (lT.uid == 3271155122) ? x.memchan : x.chan;
 				bot.createMessage(
-					chan, 
+					chan,
 					`${face} **@${lT.user} just tweeted**: \n ${lT.tweet} \n \n <http://twitter.com/${lT.user}/status/${lT.id}>`
 				);
 			}
