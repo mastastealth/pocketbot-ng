@@ -65,6 +65,7 @@ main.lucille(bot); // Twitter
 // Import command groups
 const tourney = require("./cmds/tourney")(bot);
 const admin = require("./cmds/admin")(bot);
+const other = require("./cmds/other")(bot);
 
 try {
 	tourney.register();
@@ -72,6 +73,7 @@ try {
 	// TODO - bank.register();
 	// TODO - info.register();
 	// TODO - quotes.register();
+  other.register();
 
 	bot.connect();
 } catch(e) {
