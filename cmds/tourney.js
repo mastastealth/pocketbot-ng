@@ -372,7 +372,7 @@ module.exports = (bot) => {
 			// Ignore the rest if custom tournament 
 			if (tid) {
 				// Add custom role
-				if (tRole) msg.author.addRole({
+				if (tRole) msg.member.addRole({
 					roleID: tRole
 				});
 
@@ -383,7 +383,7 @@ module.exports = (bot) => {
 			tCount++;
 			tPlayers[`${msg.author.id}`] = player.id; // Store a local list of players 
 
-			msg.author.addRole({
+			msg.member.addRole({
 				roleID: x.competitor
 			}).catch((e) => {
 				console.error(e);
