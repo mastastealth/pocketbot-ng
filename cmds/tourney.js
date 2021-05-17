@@ -3,6 +3,7 @@ const stripIndents = require("common-tags").stripIndents;
 
 module.exports = (bot) => {
 	const x = bot.PB.vars;
+	const fb = bot.PB.fb;
 	const client = challonge.withAPIKey(process.env.CHALLONGE);
 
 	let currentTourney = null;
@@ -192,6 +193,7 @@ module.exports = (bot) => {
 				.map( (obj) => {
 					//console.log(obj.participant); // Need console.log for the raw object
 					const player = obj.participant;
+
 					// Earn WIP
 					if (!process.env.LOCALTEST) {
 						let wip = 5;
@@ -201,12 +203,13 @@ module.exports = (bot) => {
 						else if (player.final_rank === 3) { wip = 15; }
 							
 						// data.userdata.transferCurrency(null, player.misc, wip, true).then( (res) => {
-						// 	console.log(`Giving ${player.misc} ${wip} WIP`);
+						console.log(`Giving ${player.misc} ${wip} WIP`);
 						// 	if ( res.hasOwnProperty("err") ) logger.log(res.err, "Error");
 						// });
 					}
 	
 					let notTop3 = player.final_rank > 3 ? `-${player.seed}` : false;
+
 					winners[`${player.final_rank}${(notTop3) ? notTop3 : ""}`] = player.misc 
 						? player.misc 
 						: player.name;
@@ -238,6 +241,7 @@ module.exports = (bot) => {
 		}
 	}
 
+	// Reset tourney data
 	function resetTourneyVars() {
 		// Remove ALL competitors
 		Object.keys(tPlayers).forEach( (p, i) => {
@@ -255,15 +259,16 @@ module.exports = (bot) => {
 		currentTourney = null;
 	}
 
+	// Checks whether a round has completed or not
 	async function checkRound(msg) {
 		// Check to see if previous round is over yet
 		try {
-			const t = await getTourneyData(),
-				matches = t.matches.map( obj => obj.match ),
-				roundList = Array.from( new Set( matches.map(m => m.round) ) ),
-				notPBCup = (Object.keys(tPlayers).length > 0) ? false : true,
-				tURL = (notPBCup) ? t.full_challonge_url : `http://pocketbotcup.challonge.com/pocketbotcup_${tNum}`,
-				tChan = (notPBCup) ? x.tourney : tourneyChan;
+			const t = await getTourneyData();
+			const matches = t.matches.map( obj => obj.match );
+			const roundList = Array.from( new Set( matches.map(m => m.round) ) );
+			const notPBCup = (Object.keys(tPlayers).length > 0) ? false : true;
+			const tURL = (notPBCup) ? t.full_challonge_url : `http://pocketbotcup.challonge.com/pocketbotcup_${tNum}`;
+			const tChan = (notPBCup) ? x.tourney : tourneyChan;
 
 			// Construct the roundMap
 			let roundMap = [null];
@@ -281,9 +286,9 @@ module.exports = (bot) => {
 				tRound++;
 
 				// Make arrays of players and matches
-				let cPlayers = {},
-					bronzeRound = (roundMap.includes(0)) ? roundMap.length-2 : null,
-					finalRound = roundMap.length-1;
+				let cPlayers = {};
+				let bronzeRound = (roundMap.includes(0)) ? roundMap.length-2 : null;
+				let finalRound = roundMap.length-1;
 
 				// For each participant, create Challoge ID : Discord ID dictionary entry
 				t.participants.forEach( (obj) => {
@@ -339,6 +344,211 @@ module.exports = (bot) => {
 		}
 	}
 
+	async function addPlayer(data, cid, tid = null, tRole = null) {
+		const stamp = process.env.LOCALTEST ? `__${Date.now()}` : false,
+			u = { 
+				"name": `${data.user}${(stamp) ? stamp : ""}`, 
+				"misc": `${msg.author.id}`
+			};
+
+		// Set the challonge ID if they pass in an account
+		if (cid) {
+			u["challonge_username"] = cid;
+			delete u.name;
+		}
+
+		// If this is a custom tournament, require a Challonge account
+		if (tid && !cid) {
+			dio.say(`<@${data.userID}>, you're going to need a Challonge account registered to join a custom tournament! Please use \`!challonge username\` to register your account, then you can remove/readd your :thumbsup: to try again.`, data, x.tourney);
+			return false;
+		}
+
+		const cTourneyLocal = (tid) ? tid : currentTourney;
+		const tChan = (tid) ? x.tourney : tourneyChan;
+
+		try {
+			let player = await client.participants.create(cTourneyLocal, {participant: u});
+
+			// Ignore the rest if custom tournament 
+			if (tid) { 
+				// Add custom role
+				if (tRole) data.bot.addToRole({
+					serverID: x.chan,
+					userID: data.userID,
+					roleID: tRole
+				});
+
+				dio.say(`<@${data.userID}> has entered the tournament! ${(cid) ? ":comet:" : ""}`, data, tChan); 
+				return false; 
+			} 
+
+			tCount++; 
+			tPlayers[`${data.userID}`] = player.id; // Store a local list of players 
+
+			data.bot.addToRole({ 
+				serverID: x.chan, 
+				userID: data.userID, 
+				roleID: x.competitor 
+			}, function(err,resp) { 
+				if (err) console.error(`${err} | ${resp}`); 
+			}); 
+
+			if (tCount >= 17) { 
+				dio.say(`<@${data.userID}> is on standby! ${(cid) ? ":comet:" : ""}`, data, tChan); 
+			} else { 
+				dio.say(`<@${data.userID}> has entered the Cup! ${(cid) ? ":comet:" : ""}`, data, tChan); 
+			} 
+
+			// Check if we've hit our player limit 
+			if (tCount === 16) { 
+				setTimeout( ()=> { 
+					dio.say(":trophy: We have now reached the maximum amount of participants! I will announce check-ins later on.", data, tChan); 
+				}, 1000); 
+			} 
+		} catch(e) {
+			console.error(e);
+			dio.say(`🕑 An error occurred adding participant to tournament ${cTourneyLocal}. :frowning: \`\`\`${e}\`\`\``, data, tChan);
+		}
+	}
+
+	async function deletePlayer(msg, cid, did, tid = null,) {
+		const cTourney = tid || currentTourney;
+
+		try {
+			await client.participants.delete(cTourney, cid);
+			msg.channel.createMessage(`🕑 <@${did}> has been removed from the tournament. Hope you can play next time!`);
+			if (tPlayers[cid]) delete tPlayers[cid];
+		} catch(e) {
+			msg.channel.createMessage("🕑 Removal unsuccessful, guess you're stuck playing. Forever.");
+			console.error(`Failed for user: ${cid}`, e);
+		}
+	}
+
+  async function updateScore(msg, args) {
+    // TODO - Ripped out all the file based junk for now
+    const score = (args[0]?.length === 3) ? args[0].split("-") : false;
+    const PBCup = (Object.values(tPlayers).length > 0) ? true : false;
+  
+    if (!score) {
+      msg.channel.createMessage("What was the score? Use the syntax `!score x-y`, no spaces between the number and dash.");
+      return false;
+    }
+  
+    // Check scores to be realistic
+    if (PBCup) {
+      if (parseInt(score[0]) > 3 || parseInt(score[1]) > 3) {
+        msg.channel.createMessage("Those are some fishy scores. Double check they are correct!");
+        return false;
+      }
+    }
+  
+    // Ok, we do have a winner, commence score upload stuff!
+    let winnerID,
+      winnerCID,
+      cTourney = await getTourneyData(),
+      matches = cTourney.matches.map( obj => obj.match ),
+      roundList = Array.from( new Set( matches.map(m => m.round) ) );
+  
+    let roundMap = [null];
+    roundMap = roundMap.concat(roundList); //[null, 1, 2, ...];
+  
+    const bronze = (roundMap[roundMap.length - 1] === 0) ? roundMap.pop() : false; // If we have a round 0 (bronze) at the end, pop it out
+    if (bronze === 0) roundMap.splice(roundMap.length - 1, 0, bronze); // and add it back as the 2nd to last round;
+  
+    // Set the winner
+    if (score[0] > score[1]) {
+      winnerID = msg.author.id;
+  
+      // Get the winner's challonge ID
+      if (PBCup) { // If PB Cup
+        for (let p in tPlayers) {
+          if (p === winnerID) winnerCID = tPlayers[p];
+        }
+      } else {
+        // If it's a custom cup, we'll need to do a little more work
+        const players = cTourney.participants.map( p => p.participant );
+        players.forEach(p => {
+          if (p.misc == winnerID) winnerCID = p.id;
+        });
+      }
+      
+    } else {
+      // Welp, now I gotta find the opponent automatically.
+      cTourney.matches.forEach( obj => {
+        // Only check open matches
+        if (obj.match.state === "open") {
+          // See if person uploading is player1 or 2 of the match
+          let players = [obj.match.player1_id, obj.match.player2_id];
+  
+          // For PB Cups, use tPlayer data
+          if (PBCup) {
+            if (tPlayers[msg.author.id] == players[0]) { // Uploader is player 1, so winner is player2
+              for (let w in tPlayers) { if (tPlayers[w] === players[1]) winnerID = tPlayers[w]; }
+              winnerCID = players[1];
+            } else if (tPlayers[msg.author.id] == players[1]) { // Uploader is player 2, winner is player 1
+              for (let w in tPlayers) { if (tPlayers[w] === players[0]) winnerID = tPlayers[w]; }
+              winnerCID = players[0];
+            }
+          } else { // Otherwise, do more hunting
+            let myCID;
+  
+            // First get my challonge ID
+            const allPlayers = cTourney.participants.map( p => p.participant );
+            allPlayers.forEach(p => { if (p.misc == msg.author.id) myCID = p.id; });
+  
+            // Now see if winner is player 1 or 2
+            winnerCID = (myCID == players[0]) ? players[1] : players[0];
+          }
+        }
+      });
+    }
+  
+    if (winnerCID === null || winnerCID === undefined) {
+      msg.channel.createMessage("Hmm, I couldn't find a proper Challonge ID to match your Discord ID. That's not good...");
+      return false;
+    }
+  
+    // Now let's look at the correct match and update it accordingly
+    let match;
+  
+    matches.forEach( obj => {
+      console.log(`Analysing ${obj.id} | ${obj.round} for Round ${tRound}`,"Info");
+
+      if (obj.state === "open" && obj.round == roundMap[tRound]) {
+        console.log(`Looking for ${winnerCID}...`);
+        if (obj.player1_id == winnerCID || obj.player2_id == winnerCID)  match = obj;
+      }
+    });
+  
+    // Attach link to match
+    try {
+      console.log(match.id);
+      // console.log("Attaching match replays...");
+  
+      // await client.matches.add_attach(currentTourney, match.id, { match_attachment: { url: file.url, description: file.filename } });
+  
+      // Format things correctly and update score
+      console.log("Formatting score for update");
+      if (score[0] > score[1] && match.player1_id == winnerCID) {
+        await client.matches.update(currentTourney, match.id, { "match" : { "scores_csv":`${score[0]}-${score[1]}`, "winner_id":winnerCID } });
+      } else if (score[1] > score[0] && match.player1_id == winnerCID) {
+        await client.matches.update(currentTourney, match.id, { "match" : { "scores_csv":`${score[1]}-${score[0]}`, "winner_id":winnerCID } });
+      } else if (score[0] > score[1] && match.player2_id == winnerCID) {
+        await client.matches.update(currentTourney, match.id, { "match" : { "scores_csv":`${score[1]}-${score[0]}`, "winner_id":winnerCID } });
+      } else if (score[1] > score[0] && match.player2_id == winnerCID) {
+        await client.matches.update(currentTourney, match.id, { "match" : { "scores_csv":`${score[0]}-${score[1]}`, "winner_id":winnerCID } });
+      }
+
+      msg.channel.createMessage("Score updated. :tada: Please wait for round to finish before reporting your next match.");
+      msg.channel.createMessage(`<@${msg.author.id}> has updated their score. :tada:`); // TODO - Replace with an embed replay summary?
+  
+      checkRound(msg);
+    } catch(err) {
+      console.error(err);
+      msg.channel.createMessage(`Dang it, something went wrong with the score submission. Try again? If you think you did everything correctly, talk to <@${x.stealth}>! :scream: \n \`\`\`Error: ${err}\`\`\``);
+    }
+  }
+
 	// ===================================
 	// Tournament Commands
 	// ===================================
@@ -388,6 +598,162 @@ module.exports = (bot) => {
 			roleIDs: [x.admin, x.adminbot, x.combot]
 		}
 	});
+
+	bot.registerCommand("checkinremind", (msg) => {
+		msg.delete();
+		bot.createMessage(tourneyChan, `Will all <@&${x.competitor}>s please \`!checkin\` if you can play in today's tournament? 
+		If you cannot, go ahead and \`!checkout\` instead. Also note, anyone who \`!signup\`s from this point on will be automatically checked in.`);
+	}, {
+		description: "Reminds PBC Competitors to check in.",
+		requirements: {
+			roleIDs: [x.admin, x.adminbot, x.combot]
+		}
+	});
+
+	bot.registerCommand("signup", async (msg, args) => {
+		msg.delete();
+
+		const cid = await fb.getProp(msg.author.id, "challonge"); // Challonge username (optional for PB Cup)
+		const tid = args[1] || null;
+
+		// Check for an actual tournament
+		if (!currentTourney && !tid) {
+			msg.channel.createMessage("🕑 There are no Pocketbot Cups currently running. :thinking: Try again some other time!");
+			return false;
+		}
+
+		// Check if you already signed up
+		if (tPlayers[msg.author.id] && !tid ) {
+			msg.channel.createMessage("🕑 You've already signed up. :tada:");
+			return false;
+		}
+
+		// Otherwise, if we're under 16 participants, add to tournament
+		if ((tCount < 16 && !tid) || tid) {
+			const tRole = (data.tRole) ? data.tRole : null;
+			addPlayer(data, cid, tid, tRole);
+		} else {
+			msg.channel.createMessage("🕑 The tournament has reached the maximum number of entries. Hope to see you next week!");
+		}
+	}, {
+		description: "Adds player to tournament",
+		aliases: ["!signin", "!singup"]
+	});
+
+	bot.registerCommand("checkin", (msg)=> {
+    msg.delete();
+
+    // Get the player's challonge player ID
+    const pid = tPlayers[`${msg.author.id}`];
+
+    // Check for tourney
+    if (!currentTourney) {
+      msg.channel.createMessage("🕑 There are no Pocketbot Cups currently running.");
+      return false;
+    }
+
+    client.participants.checkin(currentTourney, pid).then( () => {
+      msg.channel.createMessage(`:white_check_mark:  <@${msg.author.id}>, you're checked in!`);
+    }).catch( e => {
+      console.error(e);
+      msg.channel.createMessage("🕑 There was an error checking in. Check-in opens 15 minutes before the tournament starts.");
+    });
+  });
+
+	bot.registerCommand("score", (msg, args)=> {
+    if (!currentTourney) {
+      msg.channel.createMessage("🕑 There are no Pocketbot Cups currently running. :thinking: Try again some other time!");
+      return false;
+    }
+
+    // Check if we're looking for a score from this person anyway
+    if (process.env.LOCALTEST && !tPlayers.hasOwnProperty(msg.author.id) ) {
+      if (Object.values(tPlayers).length > 0) {
+        msg.channel.createMessage("🕑 Uhm...you don't seem to be in the tournament, so I'm going to go ahead and ignore you. :sweat_smile:", data.userID);
+        return false;
+      }
+    }
+
+    updateScore(msg, args);
+    
+    // TODO - Restore the rest when we have file uploading again
+  });
+
+ bot.registerCommand("dq", (msg, args)=> {
+  msg.delete();
+
+	let player = args[0]; // TODO - Probably need something better
+
+	// Check for an actual tournament
+	if (!currentTourney) {
+		msg.channel.createMessage("🕑 There are no Pocketbot Cups currently running. :thinking:");
+		return false;
+	}
+
+	// Check if you already signed up
+	if (!tPlayers.hasOwnProperty(player)) {
+		msg.channel.createMessage("🕑 This user isn't even part of the tournament.");
+		return false;
+	}
+
+	deletePlayer(msg, tPlayers[player], player);
+	checkRound(msg);
+ });
+  
+	// TODO - bot.registerCommand("signout", (msg)=> {});
+	// TODO - bot.registerCommand("checkout", (msg)=> {});
+	// TODO - bot.registerCommand("tourney", (msg)=> {});
+	// TODO - bot.registerCommand("starttourney", (msg)=> {});
+	// TODO - bot.registerCommand("endtourney", (msg)=> {});
+
+	bot.registerCommand("challonge", (msg)=> {
+		// const cid = args[0];
+		msg.delete();
+
+		let cidFB;
+		// TODO
+		// let cidFB = await data.userdata.setProp({
+		// 	user: msg.author.id,
+		// 	prop: {
+		// 		name: "challonge",
+		// 		data: cid
+		// 	}
+		// });
+
+		if (cidFB) {
+			// TODO - Make PM
+			// msg.channel.createMessage(`All right, you have registered \`${cid}\` as your Challonge username. **Make sure this link points to your profile**: <http://challonge.com/users/${cid}> , otherwise you won't be able to properly sign up for tournaments!`);
+		} else {
+			msg.channel.createMessage("🕑 Huh. Something went wrong here. Talk to Mastastealth about it.");
+		}
+	});
+
+	bot.registerCommand("bracket", async (msg)=> {
+		msg.delete();
+
+		const notPBCup = Object.keys(tPlayers).length ? false : true;
+		let tURL; 
+
+		if (notPBCup) {
+			let t = await getTourneyData();
+			tURL = t.full_challonge_url;
+		} else {
+			tURL = `http://pocketbotcup.challonge.com/pocketbotcup_${tNum}`;
+		}
+
+		msg.channel.createMessage(`:trophy: The current tournament bracket can be found at: ${tURL}`);
+	});
+
+	// ====================================
+	// Do I need these commands anymore?
+	// ====================================
+	// bot.registerCommand("lsreplays", (msg)=> {}); - Maybe
+	// bot.registerCommand("settr", (msg)=> {});
+	// bot.registerCommand("lscup", (msg)=> {});
+	// bot.registerCommand("addmatch", (msg)=> {});
+	// bot.registerCommand("randomize", (msg)=> {});
+	// bot.registerCommand("lstournies", (msg)=> {});
+	// bot.registerCommand("settid", (msg)=> {});
 
 	resumeTourney();
 	return { 
