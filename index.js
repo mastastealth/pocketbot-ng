@@ -69,13 +69,13 @@ try {
   // TODO - quotes.register();
   other.register();
 
+  bot.connect();
+
   // ===================================
   // Extra Pocketbot Tasks
   // ===================================
   main.pbcCron(bot);
   main.lucille(bot); // Twitter
-
-  bot.connect();
 } catch (e) {
   console.error(e);
 }

@@ -82,7 +82,7 @@ module.exports = (bot) => {
 			currentTourney = tournament.id;
 
 			// PB announces it
-			msg.createMessage(tourneyChan, `:trophy: A new Pocketbot Cup has begun! Follow it on Challonge here: http://pocketbotcup.challonge.com/pocketbotcup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
+			bot.createMessage(tourneyChan, `:trophy: A new Pocketbot Cup has begun! Follow it on Challonge here: http://pocketbotcup.challonge.com/pocketbotcup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
 		} catch (e) {
 			console.error(e);
 		}
@@ -558,10 +558,7 @@ module.exports = (bot) => {
 		msg?.delete();
 		makeTourney();
 	}, {
-		description: "Creates a new Pocketbot Cup",
-		requirements: {
-			roleIDs: [x.admin, x.adminbot, x.combot]
-		}
+		description: "Creates a new Pocketbot Cup"
 	});
 
 	bot.registerCommand("startcup", (msg, args) => {
@@ -632,7 +629,7 @@ module.exports = (bot) => {
 
 		// Otherwise, if we're under 16 participants, add to tournament
 		if ((tCount < 16 && !tid) || tid) {
-			const tRole = (data.tRole) ? data.tRole : null;
+			const tRole = data?.tRole || null;
 			addPlayer(data, cid, tid, tRole);
 		} else {
 			msg.channel.createMessage("🕑 The tournament has reached the maximum number of entries. Hope to see you next week!");
