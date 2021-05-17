@@ -628,7 +628,7 @@ module.exports = (bot) => {
 
 		// Otherwise, if we're under 16 participants, add to tournament
 		if ((tCount < 16 && !tid) || tid) {
-			const tRole = data?.tRole || null;
+			const tRole = null; // TODO - Check for custom tRoles
 			addPlayer(msg, cid, tid, tRole);
 		} else {
 			msg.channel.createMessage("🕑 The tournament has reached the maximum number of entries. Hope to see you next week!");
