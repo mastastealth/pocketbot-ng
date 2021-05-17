@@ -94,21 +94,6 @@ module.exports = (bot) => {
 		const tChan = (tid) ? x.tourney : tourneyChan;
 		const cTourneyScoped = (tid) ? tid : currentTourney;
 
-		// If a normal user called this without a custom tournament, fail
-		const u = msg.member;
-		const uRoles = (u && u.roles.length) ? u.roles : [];
-
-		if (
-			!tid && (
-				!uRoles.includes(x.mod)
-				&& !uRoles.includes(x.admin)
-				&& !uRoles.includes(x.adminbot)
-			)
-		) {
-			msg.channel.createMessage("🕑 Are you trying to start a Pocketbot Cup? Don't do that.");
-			return false;
-		}
-
 		if (
 			(!tid && tCount >= 4) // PB Cup with 4+ player
 			|| tid // or custom tourney
@@ -566,7 +551,7 @@ module.exports = (bot) => {
 	}, {
 		requirements: {
 			description: "Starts a Pocketbot Cup",
-			roleIDs: [x.admin, x.adminbot, x.combot]
+			roleIDs: [x.admin, x.adminbot, x.combot, x.mod]
 		}
 	});
 
