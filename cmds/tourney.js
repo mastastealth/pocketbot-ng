@@ -82,7 +82,7 @@ module.exports = (bot) => {
 			currentTourney = tournament.id;
 
 			// PB announces it
-			bot.say(tourneyChan, `:trophy: A new Pocketbot Cup has begun! Follow it on Challonge here: http://pocketbotcup.challonge.com/pocketbotcup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
+			msg.createMessage(tourneyChan, `:trophy: A new Pocketbot Cup has begun! Follow it on Challonge here: http://pocketbotcup.challonge.com/pocketbotcup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
 		} catch (e) {
 			console.error(e);
 		}
@@ -554,6 +554,7 @@ module.exports = (bot) => {
 	// ===================================
 
 	bot.registerCommand("makecup", (msg) => {
+		console.log('Attempting to make cup...');
 		msg?.delete();
 		makeTourney();
 	}, {
@@ -613,7 +614,8 @@ module.exports = (bot) => {
 	bot.registerCommand("signup", async (msg, args) => {
 		msg.delete();
 
-		const cid = await fb.getProp(msg.author.id, "challonge"); // Challonge username (optional for PB Cup)
+		const cid = null;
+		// const cid = await fb.getProp(msg.author.id, "challonge"); // Challonge username (optional for PB Cup)
 		const tid = args[1] || null;
 
 		// Check for an actual tournament
