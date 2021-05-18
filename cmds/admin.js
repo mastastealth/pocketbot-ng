@@ -10,7 +10,6 @@ module.exports = (bot) => {
     }
   });
 
-  // Mod/Admin can rename a user
   bot.registerCommand("rename", async (msg, args) => {
     if (!msg.mentions.length && args.length !== 2) {
       msg.channel.createMessage("No user detected. Enter the user via an @ mention or by ID.");
@@ -38,9 +37,11 @@ module.exports = (bot) => {
       });
     }
   }, {
+    description: "Allows mod/admin to rename a user",
     requirements: {
-      description: "Allows mod/admin to rename a user",
-      roleIDs: [x.admin, x.mod]
+      custom(msg) {
+        return helpers.hasModPerms(msg.member.roles);
+      }
     }
   });
 
