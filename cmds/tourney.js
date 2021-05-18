@@ -348,7 +348,6 @@ module.exports = (bot) => {
     }
 
     const cTourneyLocal = (tid) ? tid : currentTourney;
-    const tChan = (tid) ? x.tourney : tourneyChan;
 
     try {
       let player = await client.participants.create(cTourneyLocal, { participant: u });
@@ -356,9 +355,7 @@ module.exports = (bot) => {
       // Ignore the rest if custom tournament 
       if (tid) {
         // Add custom role
-        if (tRole) msg.member.addRole({
-          roleID: tRole
-        });
+        if (tRole) msg.member.addRole(tRole);
 
         msg.channel.createMessage(`<@${msg.author.id}> has entered the tournament! ${(cid) ? ":comet:" : ""}`);
         return false;
@@ -367,9 +364,7 @@ module.exports = (bot) => {
       tCount++;
       tPlayers[`${msg.author.id}`] = player.id; // Store a local list of players 
 
-      msg.member.addRole({
-        roleID: x.competitor
-      }).catch((e) => {
+      msg.member.addRole(x.competitor).catch((e) => {
         console.error(e);
       });
 
