@@ -4,12 +4,6 @@
 require("dotenv").config();
 const Eris = require("eris");
 
-// ===================================
-// Modules
-// ===================================
-const main = require("./core/main");
-const vars = require("./core/vars");
-// const fb = require("../core/firebase");
 
 const bot = new Eris.CommandClient(
   process.env.TOKEN, {},
@@ -19,13 +13,22 @@ const bot = new Eris.CommandClient(
     prefix: process.env.LOCALTEST ? "d!" : "!"
   }
 );
+  
+// ===================================
+// Modules
+// ===================================
+const main = require("./core/main");
+const vars = require("./core/vars");
+// const fb = require("../core/firebase");
 
 // Add some global PB-specific properties to global bot object.
 bot.PB = {
   vars,
   main,
-  // fb
+  fb: {}
 };
+
+bot.PB.helpers = require("./core/helpers")(bot);
 
 // ===================================
 // Bot Events

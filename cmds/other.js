@@ -1,5 +1,5 @@
 module.exports = (bot) => {
-	const { vars: x } = bot.PB;
+	const { vars: x, helpers } = bot.PB;
 
 	bot.registerCommand("8ball", (msg) => {
 		let n = Math.floor(Math.random() * (20) - 1),
@@ -19,9 +19,11 @@ module.exports = (bot) => {
 	bot.registerCommand("lsroles", (msg) => {
 		console.log(msg.member.roles)
 	}, {
+    description: "Print member roles into console, only for mods and up",
 		requirements: {
-			description: "Print member roles into console, only for mods and up",
-			roleIDs: [x.admin, x.adminbot, x.combot, x.mod]
+			custom(msg) {
+        return helpers.hasModPerms(msg.member.roles);
+      }
 		}
 	});
 
