@@ -1,3 +1,5 @@
+const stripIndents = require("common-tags").stripIndents;
+
 module.exports = (bot) => {
 	const { vars: x, helpers } = bot.PB;
 
