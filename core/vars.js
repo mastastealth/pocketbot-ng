@@ -25,13 +25,13 @@ const emotes = function() {
 
 module.exports = {
 	chan: "99240110486192128", // PWG Server/Main Channel ID
-	// firebasecfg: {
-	// 	apiKey:				TOKEN.FBKEY2(),
-	// 	authDomain: 		"pocketbot-40684.firebaseapp.com",
-	// 	databaseURL: 		"https://pocketbot-40684.firebaseio.com",
-	// 	storageBucket: 		"pocketbot-40684.appspot.com",
-	// 	messagingSenderId: 	"969731605928"
-	// },
+	firebasecfg: {
+		apiKey: process.env.FBKEY2,
+		authDomain: "pocketbot-40684.firebaseapp.com",
+		databaseURL: "https://pocketbot-40684.firebaseio.com",
+		storageBucket: "pocketbot-40684.appspot.com",
+		messagingSenderId: "969731605928"
+	},
 
 	// Users -----------------------
 	stealth: "98419293514919936",
@@ -132,12 +132,6 @@ module.exports = {
 
 	// DON'T DELETE These
 	// ==================
-	//Other constants
-	// firebasekeycfg: {
-	// 	projectId: "ltf-alpha-keys",
-	// 	clientEmail: TOKEN.FBKEYEMAIL(),
-	// 	privateKey: TOKEN.FBPKEY()
-	// },
 	consts: {
 		MAX_TIMEOUT: 10080 //Max mute period, 1 week for now
 	}

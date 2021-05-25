@@ -12,6 +12,9 @@ module.exports = (bot) => {
     },
     hasModPerms(roles) {
       return this.hasPerms(roles, modsUp);
+    },
+    getUser(txt) {
+      return txt?.match(/\b\d{10,}\b/g)[0];
     }
   }
 }

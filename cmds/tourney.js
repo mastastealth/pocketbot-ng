@@ -2,7 +2,7 @@ const challonge = require("challonge-node-ng");
 const stripIndents = require("common-tags").stripIndents;
 
 module.exports = (bot) => {
-  const { vars: x, fb } = bot.PB;
+  const { vars: x, fb, helpers } = bot.PB;
   const client = challonge.withAPIKey(process.env.CHALLONGE);
 
   let currentTourney = null;
@@ -575,7 +575,7 @@ module.exports = (bot) => {
       console.error(e);
     }
   }, {
-    description: "Ends a running Pocketbot Cup",
+    description: "Attempt to wrap up the round in a Pocketbot Cup",
     requirements: {
       custom(msg) {
         return helpers.hasModPerms(msg.member.roles);
@@ -599,9 +599,8 @@ module.exports = (bot) => {
   bot.registerCommand("signup", async (msg, args) => {
     msg.delete();
 
-    const cid = null;
-    // const cid = await fb.getProp(msg.author.id, "challonge"); // Challonge username (optional for PB Cup)
-    const tid = args[1] || null;
+    const cid = await fb.getProp(msg.author.id, "challonge"); // Challonge username (optional for PB Cup)
+    const tid = args[0] || null;
 
     // Check for an actual tournament
     if (!currentTourney && !tid) {
@@ -627,7 +626,7 @@ module.exports = (bot) => {
     aliases: ["!signin", "!singup"]
   });
 
-  bot.registerCommand("checkin", (msg) => {
+  bot.registerCommand("checkin", async (msg) => {
     msg.delete();
 
     // Get the player's challonge player ID
@@ -637,6 +636,11 @@ module.exports = (bot) => {
     if (!currentTourney) {
       msg.channel.createMessage("🕑 There are no Pocketbot Cups currently running.");
       return false;
+    }
+
+    if (!tPlayers[msg.author.id]) {
+      msg.channel.createMessage("🕑 You haven't signed up, but I gotchu...");
+      await addPlayer(msg, cid, tid, tRole);
     }
 
     client.participants.checkin(currentTourney, pid).then(() => {

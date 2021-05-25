@@ -19,16 +19,15 @@ const bot = new Eris.CommandClient(
 // ===================================
 const main = require("./core/main");
 const vars = require("./core/vars");
-// const fb = require("../core/firebase");
 
 // Add some global PB-specific properties to global bot object.
 bot.PB = {
   vars,
-  main,
-  fb: {}
+  main
 };
 
 bot.PB.helpers = require("./core/helpers")(bot);
+bot.PB.fb = require("./core/firebase")(bot);
 
 // ===================================
 // Bot Events
