@@ -123,7 +123,7 @@ module.exports = (bot) => {
         Round 1 Matches :crossed_swords::
         ${cMatches.join("\n")}
 
-        **Reminder**: You **will** need to submit replays to log your scores, so make sure to save 'em! :floppy_disk:${(!tid) ? "Matches are **best of 3**." : ""}`);
+        **Reminder**: Submit your scores in this channel with the format \`!score x-y\`, no more replays necessary! ${(!tid) ? "Matches are **best of 3**." : ""}`);
 
         tRound = 1; // Start round 1
 
