@@ -26,12 +26,23 @@ module.exports = (bot) => {
       // Checks userID in database, should return
       // null if user didn't exist or on Firebase error
       return new Promise((res, rej) => {
-        this.db?.soldiers.child(userID).once("value", function(user){
+        this.db?.soldiers.child(userID).once("value", (user) => {
           res(user.val()?.[prop] || false);
-        }, function(err){
+        }, (err) => {
           console.error(err);
           rej(false);
         });
+      });
+    },
+
+    setProp(userId, prop, value) {
+      return new Promise((res, rej) => {
+        try {
+          res(this.db.child(userId).update({ [prop]: value }));
+        } catch(err) {
+          console.error(err);
+          rej(false);
+        }
       });
     }
   }

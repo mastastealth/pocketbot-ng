@@ -61,12 +61,13 @@ bot.on("messageCreate", async (msg) => {
 // Import command groups
 const tourney = require("./cmds/tourney")(bot);
 const admin = require("./cmds/admin")(bot);
+const bank = require("./cmds/bank")(bot);
 const other = require("./cmds/other")(bot);
 
 try {
   tourney.register();
   admin.register();
-  // TODO - bank.register();
+  bank.register();
   // TODO - info.register();
   // TODO - quotes.register();
   other.register();
