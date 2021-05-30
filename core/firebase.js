@@ -35,10 +35,18 @@ module.exports = (bot) => {
       });
     },
 
-    setProp(userId, prop, value) {
+    async setProp(userID, prop, value) {
+      let wip;
+
+      if (prop === "currency") {
+        wip = await this.getProp(userID, "currency") || 0;
+      }
+
       return new Promise((res, rej) => {
         try {
-          res(this.db.child(userId).update({ [prop]: value }));
+          res(this.db?.soldiers.child(userID).update({ 
+            [prop]: wip ? wip + value : value
+          }));
         } catch(err) {
           console.error(err);
           rej(false);
