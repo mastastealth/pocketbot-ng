@@ -643,12 +643,14 @@ module.exports = (bot) => {
       await addPlayer(msg, cid, tid, tRole);
     }
 
-    client.participants.checkin(currentTourney, pid).then(() => {
+    try {
+      await client.participants.checkin(currentTourney, pid);
+      console.log(`${msg.author.id} has checked into tournament ${currentTourney}`);
       msg.channel.createMessage(`:white_check_mark:  <@${msg.author.id}>, you're checked in!`);
-    }).catch(e => {
+    } catch(e) {
       console.error(e);
       msg.channel.createMessage("🕑 There was an error checking in. Check-in opens 15 minutes before the tournament starts.");
-    });
+    };
   }, {
     description: "Checks in to a currently running Pocketbot Cup"
   });
@@ -677,18 +679,16 @@ module.exports = (bot) => {
   bot.registerCommand("dq", (msg, args) => {
     msg.delete();
 
-    let player = args[0]; // TODO - Probably need something better
+    let player = helpers.getUser(args[0]);
 
     // Check for an actual tournament
     if (!currentTourney) {
-      msg.channel.createMessage("🕑 There are no Pocketbot Cups currently running. :thinking:");
-      return false;
+      return msg.channel.createMessage("🕑 There are no Pocketbot Cups currently running. :thinking:");
     }
 
     // Check if you already signed up
     if (!tPlayers.hasOwnProperty(player)) {
-      msg.channel.createMessage("🕑 This user isn't even part of the tournament.");
-      return false;
+      return msg.channel.createMessage("🕑 This user isn't even part of the tournament.");
     }
 
     deletePlayer(msg, tPlayers[player], player);
