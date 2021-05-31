@@ -228,7 +228,7 @@ module.exports = (bot) => {
   // Reset tourney data
   function resetTourneyVars() {
     // Remove ALL competitors
-    Object.keys(tPlayers).forEach((p, i) => {
+     if (tPlayers.length) Object.keys(tPlayers).forEach((p, i) => {
       console.log(`Removing Competitor role from ${p}`);
       setTimeout(() => {
         const member = bot.guilds.get(x.chan).members.get(p);
@@ -362,7 +362,7 @@ module.exports = (bot) => {
       }
 
       tCount++;
-      tPlayers[`${msg.author.id}`] = player.id; // Store a local list of players 
+      tPlayers[msg.author.id] = player.id; // Store a local list of players 
 
       msg.member.addRole(x.competitor).catch((e) => {
         console.error(e);
@@ -604,14 +604,12 @@ module.exports = (bot) => {
 
     // Check for an actual tournament
     if (!currentTourney && !tid) {
-      msg.channel.createMessage("🕑 There are no Pocketbot Cups currently running. :thinking: Try again some other time!");
-      return false;
+      return msg.channel.createMessage("🕑 There are no Pocketbot Cups currently running. :thinking: Try again some other time!");
     }
 
     // Check if you already signed up
     if (tPlayers[msg.author.id] && !tid) {
-      msg.channel.createMessage("🕑 You've already signed up. :tada:");
-      return false;
+      return msg.channel.createMessage("🕑 You've already signed up. :tada:");
     }
 
     // Otherwise, if we're under 16 participants, add to tournament
@@ -644,8 +642,8 @@ module.exports = (bot) => {
     }
 
     try {
-      await client.participants.checkin(currentTourney, pid);
-      console.log(`${msg.author.id} has checked into tournament ${currentTourney}`);
+      const p = await client.participants.checkin(currentTourney, pid);
+      console.log(`${msg.author.id} has checked into tournament ${currentTourney}`, p);
       msg.channel.createMessage(`:white_check_mark:  <@${msg.author.id}>, you're checked in!`);
     } catch(e) {
       console.error(e);

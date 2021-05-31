@@ -22,7 +22,7 @@ module.exports = (bot) => {
     }
 
     if (give > 0) {
-      fb.setProp(helpers.getUser(args[0]), "currency", give);
+      fb.setProp(who, "currency", give);
       fb.setProp(msg.author.id, "currency", give * -1);
       msg.channel.createMessage(`**${give}** ${x.emojis.wip} coins successfully transferred.`);
     } else {
