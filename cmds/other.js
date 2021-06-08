@@ -3,6 +3,18 @@ const stripIndents = require("common-tags").stripIndents;
 module.exports = (bot) => {
   const { vars: x, helpers } = bot.PB;
 
+  const guides = [
+    { 
+      name: ":eyes: The Basics of Scouting (2019)",
+      value: "[Link to Kerpa's video on YT](https://www.youtube.com/watch?v=nitvji2PJGg)"
+    },
+    {
+      name: ":crossed_swords: Basic Multiplayer Strategies (2018)",
+      value: "[Link to EELuminatus' guide on Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=1586529908)",
+      inline: true
+    }
+  ];
+
   bot.registerCommand("8ball", (msg) => {
     let n = Math.floor(Math.random() * (20) - 1),
       answer = [
@@ -100,6 +112,25 @@ module.exports = (bot) => {
     msg.channel.createMessage(":white_check_mark: Click here to verify your TnT files: http://toothandtailgame.com/verify")
   }, {
     description: "Posts a Steam link which automatically verifies the TnT directory"
+  });
+
+  bot.registerCommand("guide", (msg) => {
+    const fields = [];
+    const embed = {
+      title: "Guides",
+      color: "8281503",
+      description: "If you're new to the game, this is a great place to start and I hope by the end of this, you'll have a solid understanding of Tooth and Tail and be better equipped with knowledge to win your battles.",
+      fields
+    }
+
+    guides.forEach(g => {
+      fields.push(g)
+    });
+
+    msg.channel.createMessage({ embed });
+  }, {
+    description: "Learn some TnT basics.",
+    aliases: ["guides"]
   });
 
   return {
