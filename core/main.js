@@ -394,7 +394,7 @@ module.exports = {
 
 		cron.schedule(`0 45 ${tourneyHrs[0]},${tourneyHrs[1]},${tourneyHrs[2]} * * 1`, function () {
 			console.log("Reminding about Cup.", "OK");
-			const cmd = Object.values(bot.commands).filter(cmd => cmd.label.includes("checkinremind"))[0];
+			const cmd = Object.values(bot.commands).filter(cmd => cmd.label.includes("signoutremind"))[0];
 			cmd.execute(null, null, { client: bot });
 
 			bot.createMessage(vars.memchan, `For anyone <@&${vars.lfg}> or just hanging around, there is a Pocketbot Cup currently open for signups, it starts in 15 minutes over in <#${vars.pbcup}>. Go win some ${vars.emojis.wip}!`);

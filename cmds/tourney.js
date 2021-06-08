@@ -72,8 +72,7 @@ module.exports = (bot) => {
           "start_at": new Date(Date.now() + (60 * 60 * 1000)), // Start in 1h
           "show_rounds": true,
           "game_id": 54849,
-          "game_name": "Tooth and Tail",
-          "check_in_duration": 20 // minutes
+          "game_name": "Tooth and Tail"
         }
       });
 
@@ -186,10 +185,8 @@ module.exports = (bot) => {
             else if (player.final_rank === 2) { wip = 30; }
             else if (player.final_rank === 3) { wip = 15; }
 
-            // data.userdata.transferCurrency(null, player.misc, wip, true).then( (res) => {
+            fb.setProp(player.misc, "currency", wip);
             console.log(`Giving ${player.misc} ${wip} WIP`);
-            // 	if ( res.hasOwnProperty("err") ) logger.log(res.err, "Error");
-            // });
           }
 
           let notTop3 = player.final_rank > 3 ? `-${player.seed}` : false;
@@ -226,21 +223,25 @@ module.exports = (bot) => {
   }
 
   // Reset tourney data
-  function resetTourneyVars() {
-    // Remove ALL competitors
-     if (tPlayers.length) Object.keys(tPlayers).forEach((p, i) => {
-      console.log(`Removing Competitor role from ${p}`);
-      setTimeout(() => {
-        const member = bot.guilds.get(x.chan).members.get(p);
-        if (member) member.deleteRole(x.competitor);
-      }, (i + 1) * 600);
-    });
+  async function resetTourneyVars() {
+    tCount = 0;
+    tRound = 1;
+    currentTourney = null;
 
-    // Now reset the vars
-    tPlayers = {},
-      tCount = 0,
-      tRound = 1,
-      currentTourney = null;
+    // Remove ALL competitors
+    if (tPlayers.length) {
+      try {
+        await Promise.all(
+          Object.keys(tPlayers).map(p => {
+            const member = bot.guilds.get(x.chan).members.get(p);
+            return member?.deleteRole(x.competitor);
+          })
+        );
+
+        console.log('Cleared all competitors.');
+        tPlayers = {};
+      } catch (e) { console.error(e); }
+    }
   }
 
   // Checks whether a round has completed or not
@@ -583,12 +584,11 @@ module.exports = (bot) => {
     }
   });
 
-  bot.registerCommand("checkinremind", (msg) => {
+  bot.registerCommand("signoutremind", (msg) => {
     msg?.delete();
-    bot.createMessage(tourneyChan, `Will all <@&${x.competitor}>s please \`!checkin\` if you can play in today's tournament? 
-    If you cannot, go ahead and \`!checkout\` instead. Also note, anyone who \`!signup\`s from this point on will be automatically checked in.`);
+    bot.createMessage(tourneyChan, `<@&${x.competitor}>s if you cannot play in the tournament starting soon, go ahead and \`!signout\`. Otherwise, good luck!`);
   }, {
-    description: "Reminds PBC Competitors to check in.",
+    description: "Reminds PBC Competitors that tournament will start soon.",
     requirements: {
       custom(msg) {
         return helpers.hasModPerms(msg.member.roles);
@@ -624,7 +624,7 @@ module.exports = (bot) => {
     aliases: ["!signin", "!singup"]
   });
 
-  bot.registerCommand("checkin", async (msg) => {
+  bot.registerCommand("signout", async (msg) => {
     msg.delete();
 
     // Get the player's challonge player ID
@@ -632,25 +632,21 @@ module.exports = (bot) => {
 
     // Check for tourney
     if (!currentTourney) {
-      msg.channel.createMessage("🕑 There are no Pocketbot Cups currently running.");
-      return false;
+      return msg.channel.createMessage("🕑 There are no Pocketbot Cups currently running.");
     }
 
     if (!tPlayers[msg.author.id]) {
-      msg.channel.createMessage("🕑 You haven't signed up, but I gotchu...");
-      await addPlayer(msg, cid, tid, tRole);
+      return msg.channel.createMessage("🕑 You haven't even signed up, liar.");
     }
 
     try {
-      const p = await client.participants.checkin(currentTourney, pid);
-      console.log(`${msg.author.id} has checked into tournament ${currentTourney}`, p);
-      msg.channel.createMessage(`:white_check_mark:  <@${msg.author.id}>, you're checked in!`);
+      deletePlayer(msg, tPlayers[pid], pid);
     } catch(e) {
       console.error(e);
-      msg.channel.createMessage("🕑 There was an error checking in. Check-in opens 15 minutes before the tournament starts.");
+      msg.channel.createMessage("🕑 There was an error signing out.");
     };
   }, {
-    description: "Checks in to a currently running Pocketbot Cup"
+    description: "Signs out of currently running Pocketbot Cup"
   });
 
   bot.registerCommand("score", (msg, args) => {
@@ -674,7 +670,7 @@ module.exports = (bot) => {
     description: "Submits a score for a currently running Pocketbot Cup"
   });
 
-  bot.registerCommand("dq", (msg, args) => {
+  bot.registerCommand("dq", async (msg, args) => {
     msg.delete();
 
     let player = helpers.getUser(args[0]);
@@ -689,7 +685,7 @@ module.exports = (bot) => {
       return msg.channel.createMessage("🕑 This user isn't even part of the tournament.");
     }
 
-    deletePlayer(msg, tPlayers[player], player);
+    await deletePlayer(msg, tPlayers[player], player);
     checkRound(msg);
   }, {
     description: "Removes a user from a currently running Pocketbot Cup",
@@ -700,8 +696,6 @@ module.exports = (bot) => {
     }
   });
 
-  // TODO - bot.registerCommand("signout", (msg)=> {});
-  // TODO - bot.registerCommand("checkout", (msg)=> {});
   // TODO - bot.registerCommand("tourney", (msg)=> {});
   // TODO - bot.registerCommand("starttourney", (msg)=> {});
   // TODO - bot.registerCommand("endtourney", (msg)=> {});
@@ -756,6 +750,7 @@ module.exports = (bot) => {
   // bot.registerCommand("settid", (msg)=> {});
 
   resumeTourney();
+
   return {
     register() { console.info("Registered tournament commands."); }
   };
