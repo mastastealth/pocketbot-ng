@@ -258,8 +258,10 @@ module.exports = {
 			}
 		}
 	},
-	muteUser(msg, bot, warning, time = 2, admin = null) {
+	async muteUser(msg, bot, warning, time = 2, admin = null) {
 		const { vars } = bot.PB;
+    const private = await msg.author.getDMChannel();
+
 		msg.member.addRole(vars.muted, warning);
 
 		if (admin) {
@@ -274,7 +276,7 @@ module.exports = {
 				bot
 			});
 		} else { // Automute
-			bot.createMessage(msg.author.id, `You have been muted for ${time} minutes because you were detected as spamming a channel. \n _If you weren't, and were wrongly flagged by the bot, please let a Moderator know. If you were, please try to use proper internet etiquette when engaging in chat._`);
+			private.createMessage(`You have been muted for ${time} minutes because you were detected as spamming a channel. \n _If you weren't, and were wrongly flagged by the bot, please let a Moderator know. If you were, please try to use proper internet etiquette when engaging in chat._`);
 			bot.createMessage(msg.channel.id, `<@${msg.author.id}> has been muted for ${time} minutes`);
 			module.exports.modEmbed({
 				admin: "Pocketbot",
@@ -289,11 +291,9 @@ module.exports = {
 		console.info(`Muted: ${msg.author.username} | ${msg.author.id}`);
 
 		setTimeout(async () => {
-			const private = await msg.author.getDMChannel();
-
-			msg.member.deleteRole(vars.muted);
+			msg.member.removeRole(vars.muted, "Mute has been lifted.");
 			// PM
-			bot.createMessage(private.id, "You have now been unmuted. :tada: Please avoid any issues in the future. Constant mutes may result in strikes.");
+			private.createMessage("You have now been unmuted. :tada: Please avoid any issues in the future. Constant mutes may result in strikes.");
 			// Community
 			bot.createMessage(msg.channel.id, `<@${msg.author.id}> is no longer muted`);
 			// Console

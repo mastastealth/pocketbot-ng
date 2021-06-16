@@ -132,6 +132,7 @@ module.exports = (bot) => {
         }
 
         // Remove all the people with Competitor who AREN'T playing
+        // TODO - Don't need this anymore?
         const cPlaying = cTourney.participants
           .map(obj => obj.match)
           .filter(player => player && player.seed > 8);
@@ -139,7 +140,7 @@ module.exports = (bot) => {
         Object.values(cPlaying).forEach((p, i) => {
           setTimeout(async () => {
             const member = await bot.guilds.get(x.chan).members.get(p.misc);
-            if (member) member.deleteRole(x.competitor);
+            member?.removeRole(x.competitor, "Removing idle players from PBC");
           }, (i + 1) * 600);
         });
 
@@ -234,7 +235,7 @@ module.exports = (bot) => {
         await Promise.all(
           Object.keys(tPlayers).map(p => {
             const member = bot.guilds.get(x.chan).members.get(p);
-            return member?.deleteRole(x.competitor);
+            return member?.removeRole(x.competitor, "PBC Completed");
           })
         );
 
