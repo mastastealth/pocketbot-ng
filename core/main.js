@@ -108,8 +108,8 @@ module.exports = {
 		// Ignore self/matchbot
 		if (msg.author.id !== bot.user.id && msg.author.id !== vars.mbot) {
 			const speaker = msg.author.id;
-			const speakerRoles = msg.member && msg.member.roles.length ? msg.member.roles : [];
-			const minJoinedAgo = speaker && speaker.createdAt ? Math.floor(((Date.now() - speaker.createdAt) / 1000) / 60) : 0;
+			const speakerRoles = msg.member?.roles.length ? msg.member.roles : [];
+			const minJoinedAgo = speaker && msg.author.createdAt ? Math.floor(((Date.now() - msg.author.createdAt) / 1000) / 60) : 0;
 			const chanID = msg.channel.id;
 			const userID = msg.author.id;
 
@@ -123,9 +123,9 @@ module.exports = {
 				if (cMap[chanID].length > 5) cMap[chanID].shift();
 
 				// Ignore mods/devs
-				// if (!speakerRoles.includes(vars.mod) && !speakerRoles.includes(vars.admin)) {
-				cList.push(userID);
-				// }
+				if (!speakerRoles.includes(vars.mod) && !speakerRoles.includes(vars.admin)) {
+				  cList.push(userID);
+				}
 
 				// For non-roled folks
 				if (!speakerRoles.length) {
@@ -439,7 +439,7 @@ module.exports = {
 				let chan = (lT.uid == 3271155122) ? x.memchan : x.chan;
 				bot.createMessage(
 					chan,
-					`${face} **@${lT.user} just tweeted**: \n ${lT.tweet} \n \n <http://twitter.com/${lT.user}/status/${lT.id}>`
+					`${face} **@${lT.user} just tweeted**:\n <http://twitter.com/${lT.user}/status/${lT.id}>`
 				);
 			}
 		});

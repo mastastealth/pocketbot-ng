@@ -230,7 +230,7 @@ module.exports = (bot) => {
     currentTourney = null;
 
     // Remove ALL competitors
-    if (tPlayers.length) {
+    if (Object.keys(tPlayers).length) {
       try {
         await Promise.all(
           Object.keys(tPlayers).map(p => {
