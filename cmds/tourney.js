@@ -55,17 +55,30 @@ module.exports = (bot) => {
   }
 
   // This will create the tournament in Challonge
-  async function makeTourney() {
+  async function makeTourney(msg) {
+    let description = "Welcome to the new and fully automated <strong>Pocketbot Cup</strong>! This is a weekly cup run by Pocketbot every Monday to let players enjoy a small dose of competition, while helping analyze replay data with the latest patch. If you have any questions or suggestions, talk to Mastastealth on the <a href='http://discord.gg/pockwatch'>PWG Discord</a>.";
+    let type = "Pocketbot";
+
+    if (!helpers.hasModPerms(msg.member.roles)) {
+      description = `This is a custom cup made by the community. This one was started by ${msg.author.username}.`;
+      type = "Community";
+
+      setTimeout(() => {
+        const cmd = Object.values(bot.commands).filter(cmd => cmd.label.includes("startcup"))[0];
+			  cmd.execute(null, null, { client: bot });
+      }, 1000 * 60 * 60);
+    }
+
     try {
-      const cups = await client.tournaments.index({ "subdomain": "pocketbotcup" });
+      const cups = await client.tournaments.index({ "subdomain": `${type.toLowerCase()}cup` });
       tNum = cups.length + 1;
 
       const tournament = await client.tournaments.create({
         "tournament": {
-          "name": `Pocketbot Cup #${tNum}`,
-          "url": `pocketbotcup_${tNum}`,
-          "subdomain": "pocketbotcup",
-          "description": "Welcome to the new and fully automated <strong>Pocketbot Cup</strong>! This is a weekly cup run by Pocketbot every Monday to let players enjoy a small dose of competition, while helping analyze replay data with the latest patch. If you have any questions or suggestions, talk to Mastastealth on the <a href='http://discord.gg/pockwatch'>PWG Discord</a>.",
+          name: `${type} Cup #${tNum}`,
+          url: `${type.toLowerCase()}_${tNum}`,
+          description,
+          "subdomain": type.toLowerCase(),
           "hold_third_place_match": true,
           "accept_attachments": true,
           "signup_cap": 16,
@@ -80,7 +93,7 @@ module.exports = (bot) => {
       currentTourney = tournament.id;
 
       // PB announces it
-      bot.createMessage(tourneyChan, `:trophy: A new Pocketbot Cup has begun! Follow it on Challonge here: http://pocketbotcup.challonge.com/pocketbotcup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
+      bot.createMessage(tourneyChan, `:trophy: A new ${type} Cup has begun! Follow it on Challonge here: http://${type.toLowerCase()}.challonge.com/${url} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
     } catch (e) {
       console.error(e);
     }
@@ -533,14 +546,17 @@ module.exports = (bot) => {
   bot.registerCommand("makecup", (msg) => {
     console.log('Attempting to make cup...');
     msg?.delete();
-    makeTourney();
-  }, {
-    description: "Creates a new Pocketbot Cup",
-    requirements: {
-      custom(msg) {
-        return helpers.hasModPerms(msg.member.roles);
-      }
+
+    if (currentTourney) {
+      return msg.channel.createMessage("Cup currently in progress, try again later.");
     }
+
+    makeTourney(msg);
+  }, {
+    description: "Creates a new Pocketbot or Community Cup",
+    cooldown: 1000 * 60 * 60,
+    cooldownMessage: "One cup at a time bro, give me a break.",
+    cooldownReturns: 2
   });
 
   bot.registerCommand("startcup", (msg, args) => {
@@ -726,15 +742,8 @@ module.exports = (bot) => {
   bot.registerCommand("bracket", async (msg) => {
     msg.delete();
 
-    const notPBCup = Object.keys(tPlayers).length ? false : true;
-    let tURL;
-
-    if (notPBCup) {
-      let t = await getTourneyData();
-      tURL = t.full_challonge_url;
-    } else {
-      tURL = `http://pocketbotcup.challonge.com/pocketbotcup_${tNum}`;
-    }
+    let t = await getTourneyData();
+    let tURL = t.full_challonge_url;
 
     msg.channel.createMessage(`:trophy: The current tournament bracket can be found at: ${tURL}`);
   });
