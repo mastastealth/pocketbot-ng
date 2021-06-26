@@ -78,7 +78,7 @@ module.exports = (bot) => {
           "name": `${type} Cup #${tNum}`,
           "url": `${type.toLowerCase()}_${tNum}`,
           description,
-          "subdomain": type.toLowerCase(),
+          "subdomain": "pocketbotcup",
           "hold_third_place_match": true,
           "accept_attachments": true,
           "signup_cap": 16,
@@ -93,7 +93,7 @@ module.exports = (bot) => {
       currentTourney = tournament.id;
 
       // PB announces it
-      bot.createMessage(tourneyChan, `:trophy: A new ${type} Cup has begun! Follow it on Challonge here: http://pocketbotcup.challonge.com/${type.toLowerCase()}_${tNum}} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
+      bot.createMessage(tourneyChan, `:trophy: A new ${type} Cup has begun! Follow it on Challonge here: http://pocketbotcup.challonge.com/${type.toLowerCase()}_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
     } catch (e) {
       console.error(e);
     }
@@ -644,8 +644,8 @@ module.exports = (bot) => {
   bot.registerCommand("signout", async (msg) => {
     msg.delete();
 
-    // Get the player's challonge player ID
-    const pid = tPlayers[`${msg.author.id}`];
+    // Get the player's ID
+    const pid = msg.author.id;
 
     // Check for tourney
     if (!currentTourney) {
