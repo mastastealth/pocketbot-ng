@@ -35,6 +35,7 @@ bot.PB.fb = require("./core/firebase")(bot);
 bot.on("ready", () => {
   console.log(`Bot logged in ${process.env.LOCALTEST ? "locally" : "online"} successfully.`);
   console.log(Object.keys(bot.commands));
+  bot.createMessage(vars.testing, "Reooted.");
 });
 
 bot.on("disconnect", () => {
