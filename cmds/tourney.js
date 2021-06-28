@@ -71,12 +71,12 @@ module.exports = (bot) => {
 
     try {
       const cups = await client.tournaments.index({ "subdomain": `pocketbotcup` });
-      tNum = cups.filter(cup => cup.url.includes(type.toLowerCase())).length + 1;
+      tNum = cups.filter(cup => cup.url.includes(`${type.toLowerCase()}cup`)).length + 1;
 
       const tournament = await client.tournaments.create({
         "tournament": {
           "name": `${type} Cup #${tNum}`,
-          "url": `${type.toLowerCase()}_${tNum}`,
+          "url": `${type.toLowerCase()}cup_${tNum}`,
           description,
           "subdomain": "pocketbotcup",
           "hold_third_place_match": true,
@@ -93,7 +93,7 @@ module.exports = (bot) => {
       currentTourney = tournament.id;
 
       // PB announces it
-      bot.createMessage(tourneyChan, `:trophy: A new ${type} Cup has begun! Follow it on Challonge here: http://pocketbotcup.challonge.com/${type.toLowerCase()}_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
+      bot.createMessage(tourneyChan, `:trophy: A new ${type} Cup has begun! Follow it on Challonge here: http://pocketbotcup.challonge.com/${type.toLowerCase()}cup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
     } catch (e) {
       console.error(e);
     }
