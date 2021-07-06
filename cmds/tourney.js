@@ -10,6 +10,7 @@ module.exports = (bot) => {
   let tPlayers = {};
   let tRound = null;
   let tCount = 0;
+  let tType = "Pocketbot";
   let tourneyChan = (process.env.LOCALTEST) ? x.testing : x.pbcup;
 
   // In case of reset/crash mid tourney, look for any open PB tournaments and set all the data from there
@@ -59,11 +60,10 @@ module.exports = (bot) => {
     msg.channel.createMessage(`🕑 Creating a new tournament...`);
   
     let description = "Welcome to the new and fully automated <strong>Pocketbot Cup</strong>! This is a weekly cup run by Pocketbot every Monday to let players enjoy a small dose of competition, while helping analyze replay data with the latest patch. If you have any questions or suggestions, talk to Mastastealth on the <a href='http://discord.gg/pockwatch'>PWG Discord</a>.";
-    let type = "Pocketbot";
 
     if (!helpers.hasModPerms(msg.member.roles)) {
       description = `This is a custom cup made by the community. This one was started by ${msg.author.username}.`;
-      type = "Community";
+      tType = "Community";
 
       setTimeout(() => {
         const cmd = Object.values(bot.commands).filter(cmd => cmd.label.includes("startcup"))[0];
@@ -73,12 +73,12 @@ module.exports = (bot) => {
 
     try {
       const cups = await client.tournaments.index({ "subdomain": `pocketbotcup` });
-      tNum = cups.filter(cup => cup.url.includes(`${type.toLowerCase()}cup`)).length + 1;
+      tNum = cups.filter(cup => cup.url.includes(`${tType.toLowerCase()}cup`)).length + 1;
 
       const tournament = await client.tournaments.create({
         "tournament": {
-          "name": `${type} Cup #${tNum}`,
-          "url": `${type.toLowerCase()}cup_${tNum}`,
+          "name": `${tType} Cup #${tNum}`,
+          "url": `${tType.toLowerCase()}cup_${tNum}`,
           description,
           "subdomain": "pocketbotcup",
           "hold_third_place_match": true,
@@ -95,7 +95,7 @@ module.exports = (bot) => {
       currentTourney = tournament.id;
 
       // PB announces it
-      bot.createMessage(tourneyChan, `:trophy: A new ${type} Cup has begun! Follow it on Challonge here: http://pocketbotcup.challonge.com/${type.toLowerCase()}cup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
+      bot.createMessage(tourneyChan, `:trophy: A new ${tType} Cup has begun! Follow it on Challonge here: http://pocketbotcup.challonge.com/${tType.toLowerCase()}cup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
     } catch (e) {
       console.error(e);
     }
@@ -242,6 +242,7 @@ module.exports = (bot) => {
   async function resetTourneyVars() {
     tCount = 0;
     tRound = 1;
+    tType = "Pocketbot";
     currentTourney = null;
 
     // Remove ALL competitors
@@ -268,7 +269,7 @@ module.exports = (bot) => {
       const matches = t.matches.map(obj => obj.match);
       const roundList = Array.from(new Set(matches.map(m => m.round)));
       const notPBCup = (Object.keys(tPlayers).length > 0) ? false : true;
-      const tURL = (notPBCup) ? t.full_challonge_url : `http://pocketbotcup.challonge.com/pocketbotcup_${tNum}`;
+      const tURL = (notPBCup) ? t.full_challonge_url : `http://pocketbotcup.challonge.com/${tType.toLowerCase()}_${tNum}`;
       const tChan = (notPBCup) ? x.tourney : tourneyChan;
 
       // Construct the roundMap
