@@ -187,6 +187,8 @@ module.exports = (bot) => {
 
       // Announce winners
       let winners = {};
+      let prize = tType === "Pocketbot" ? [50, 30, 15] : [25, 15, 10];
+
       cTourney.participants
         .filter(p => !p.participant["has_irrelevant_seed"])
         .map((obj) => {
@@ -197,9 +199,9 @@ module.exports = (bot) => {
           if (!process.env.LOCALTEST) {
             let wip = 5;
 
-            if (player.final_rank === 1) { wip = 50; }
-            else if (player.final_rank === 2) { wip = 30; }
-            else if (player.final_rank === 3) { wip = 15; }
+            if (player.final_rank === 1) { wip = prize[0]; }
+            else if (player.final_rank === 2) { wip = prize[1]; }
+            else if (player.final_rank === 3) { wip = prize[2]; }
 
             fb.setProp(player.misc, "currency", wip);
             console.log(`Giving ${player.misc} ${wip} WIP`);
@@ -216,9 +218,9 @@ module.exports = (bot) => {
 
       bot.createMessage(tChan, stripIndents`The tournament has come to a close! :tada: Our winners are:
   
-        :first_place: <@${winners["1"]}> +50 ${x.emojis.wip}
-        :second_place: <@${winners["2"]}> +30 ${x.emojis.wip}
-        :third_place: <@${winners["3"]}> +15 ${x.emojis.wip}
+        :first_place: <@${winners["1"]}> +${prize[0]} ${x.emojis.wip}
+        :second_place: <@${winners["2"]}> +${prize[1]} ${x.emojis.wip}
+        :third_place: <@${winners["3"]}> +${prize[2]} ${x.emojis.wip}
   
         **All** other participants will receive 5 ${x.emojis.wip} as well. Thanks for playing, see you next time!`);
 
