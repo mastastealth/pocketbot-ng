@@ -181,13 +181,14 @@ module.exports = (bot) => {
     const notPBCup = (Object.keys(tPlayers).length > 0) ? false : true;
     const tChan = notPBCup ? x.tourney : tourneyChan;
 
+    const tName = notPBCup ? cTourney.name : `A ${tType} Cup`;
+    let prize = tType === "Pocketbot" ? [50, 30, 15] : [25, 15, 10];
+
     try {
       const cTourney = await client.tournaments.finalize(tourney, { "include_participants": 1 });
-      const tName = notPBCup ? cTourney.name : "A Pocketbot Cup";
 
       // Announce winners
       let winners = {};
-      let prize = tType === "Pocketbot" ? [50, 30, 15] : [25, 15, 10];
 
       cTourney.participants
         .filter(p => !p.participant["has_irrelevant_seed"])
@@ -271,7 +272,7 @@ module.exports = (bot) => {
       const matches = t.matches.map(obj => obj.match);
       const roundList = Array.from(new Set(matches.map(m => m.round)));
       const notPBCup = (Object.keys(tPlayers).length > 0) ? false : true;
-      const tURL = (notPBCup) ? t.full_challonge_url : `http://pocketbotcup.challonge.com/${tType.toLowerCase()}_${tNum}`;
+      const tURL = (notPBCup) ? t.full_challonge_url : `http://pocketbotcup.challonge.com/${tType.toLowerCase()}cup_${tNum}`;
       const tChan = (notPBCup) ? x.tourney : tourneyChan;
 
       // Construct the roundMap
