@@ -439,7 +439,7 @@ module.exports = {
 				let chan = (lT.uid == 3271155122) ? x.memchan : x.chan;
 				bot.createMessage(
 					chan,
-					`${face} **@${lT.user} just tweeted**:\n <http://twitter.com/${lT.user}/status/${lT.id}>`
+					`${face} **@${lT.user} just tweeted**:\n http://twitter.com/${lT.user}/status/${lT.id}`
 				);
 			}
 		});
