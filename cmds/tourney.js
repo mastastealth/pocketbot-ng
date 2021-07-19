@@ -57,7 +57,7 @@ module.exports = (bot) => {
 
   // This will create the tournament in Challonge
   async function makeTourney(msg) {
-    msg.channel.createMessage(`🕑 Creating a new tournament...`);
+    bot.createMessage(tourneyChan, `🕑 Creating a new tournament...`);
   
     let description = "Welcome to the new and fully automated <strong>Pocketbot Cup</strong>! This is a weekly cup run by Pocketbot every Monday to let players enjoy a small dose of competition, while helping analyze replay data with the latest patch. If you have any questions or suggestions, talk to Mastastealth on the <a href='http://discord.gg/pockwatch'>PWG Discord</a>.";
 
