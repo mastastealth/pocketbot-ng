@@ -61,7 +61,7 @@ module.exports = (bot) => {
   
     let description = "Welcome to the new and fully automated <strong>Pocketbot Cup</strong>! This is a weekly cup run by Pocketbot every Monday to let players enjoy a small dose of competition, while helping analyze replay data with the latest patch. If you have any questions or suggestions, talk to Mastastealth on the <a href='http://discord.gg/pockwatch'>PWG Discord</a>.";
 
-    if (!helpers.hasModPerms(msg.member.roles)) {
+    if (msg && !helpers.hasModPerms(msg.member.roles)) {
       description = `This is a custom cup made by the community. This one was started by ${msg.author.username}.`;
       tType = "Community";
 
