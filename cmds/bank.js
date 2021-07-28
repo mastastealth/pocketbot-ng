@@ -22,9 +22,15 @@ module.exports = (bot) => {
     }
 
     if (give > 0) {
-      fb.setProp(who, "currency", give);
-      fb.setProp(msg.author.id, "currency", give * -1);
-      msg.channel.createMessage(`**${give}** ${x.emojis.wip} coins successfully transferred.`);
+      const have = await fb.getProp(msg.author.id, "currency");
+
+      if (have > give) {
+        fb.setProp(who, "currency", give);
+        fb.setProp(msg.author.id, "currency", give * -1);
+        msg.channel.createMessage(`**${give}** ${x.emojis.wip} coins successfully transferred.`);
+      } else {
+        msg.channel.createMessage(`Transfer denied. Cannot give **${give}** ${x.emojis.wip} when you only have **${have}** ${x.emojis.wip}.`);
+      }
     } else {
       msg.channel.createMessage('Transfer unsuccessful. Syntax is `!transfer @user N`.');
     }
