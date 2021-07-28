@@ -24,7 +24,7 @@ module.exports = (bot) => {
     if (give > 0) {
       const have = await fb.getProp(msg.author.id, "currency");
 
-      if (have > give) {
+      if (have && have >= give) {
         fb.setProp(who, "currency", give);
         fb.setProp(msg.author.id, "currency", give * -1);
         msg.channel.createMessage(`**${give}** ${x.emojis.wip} coins successfully transferred.`);
