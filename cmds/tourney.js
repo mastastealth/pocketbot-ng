@@ -644,7 +644,8 @@ module.exports = (bot) => {
     }
   }, {
     description: "Adds player to tournament",
-    aliases: ["signin", "singup"]
+    aliases: ["signin", "singup"],
+    cooldown: 5000
   });
 
   bot.registerCommand("signout", async (msg) => {
