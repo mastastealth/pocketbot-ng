@@ -29,6 +29,9 @@ module.exports = (bot) => {
 
         tData.participants.forEach(obj => tPlayers[obj.participant.misc] = obj.participant.id);
         tCount = Object.keys(tPlayers).length;
+        if (!tData.url.includes('pocketbotcup') || !tData.url.includes('communitycup')) {
+          tourneyChan = x.tourney;
+        }
 
         let earlyMatch = tData.matches.map(obj => obj.match)
           .filter(match => match.state === "open"),
@@ -69,7 +72,9 @@ module.exports = (bot) => {
       if (args.length) {
         name = args.join(' ');
         tType = msg.author.username.replace(' ','');
+        tourneyChan = x.tourney;
       } else {
+        tourneyChan = (process.env.LOCALTEST) ? x.testing : x.pbcup;
         setTimeout(() => {
           const cmd = Object.values(bot.commands).filter(cmd => cmd.label.includes("startcup"))[0];
           cmd.execute(null, null, { client: bot });
