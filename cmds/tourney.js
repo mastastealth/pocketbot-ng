@@ -56,46 +56,56 @@ module.exports = (bot) => {
   }
 
   // This will create the tournament in Challonge
-  async function makeTourney(msg) {
+  async function makeTourney(msg, args) {
     bot.createMessage(tourneyChan, `🕑 Creating a new tournament...`);
   
     let description = "Welcome to the new and fully automated <strong>Pocketbot Cup</strong>! This is a weekly cup run by Pocketbot every Monday to let players enjoy a small dose of competition, while helping analyze replay data with the latest patch. If you have any questions or suggestions, talk to Mastastealth on the <a href='http://discord.gg/pockwatch'>PWG Discord</a>.";
+    let name = null;
 
     if (msg && !helpers.hasModPerms(msg.member.roles)) {
       description = `This is a custom cup made by the community. This one was started by ${msg.author.username}.`;
       tType = "Community";
 
-      setTimeout(() => {
-        const cmd = Object.values(bot.commands).filter(cmd => cmd.label.includes("startcup"))[0];
-			  cmd.execute(null, null, { client: bot });
-      }, 1000 * 60 * 60);
+      if (args.length) {
+        name = args.join(' ');
+        tType = msg.author.username.replace(' ','');
+      } else {
+        setTimeout(() => {
+          const cmd = Object.values(bot.commands).filter(cmd => cmd.label.includes("startcup"))[0];
+          cmd.execute(null, null, { client: bot });
+        }, 1000 * 60 * 60);
+      }
     }
 
     try {
       const cups = await client.tournaments.index({ "subdomain": `pocketbotcup` });
       tNum = cups.filter(cup => cup.url.includes(`${tType.toLowerCase()}cup`)).length + 1;
 
-      const tournament = await client.tournaments.create({
-        "tournament": {
-          "name": `${tType} Cup #${tNum}`,
-          "url": `${tType.toLowerCase()}cup_${tNum}`,
-          description,
-          "subdomain": "pocketbotcup",
-          "hold_third_place_match": true,
-          "accept_attachments": true,
-          "signup_cap": 16,
-          "start_at": new Date(Date.now() + (60 * 60 * 1000)), // Start in 1h
-          "show_rounds": true,
-          "game_id": 54849,
-          "game_name": "Tooth and Tail"
-        }
-      });
+      const tournament = {
+        name,
+        "url": `${tType.toLowerCase()}cup_${tNum}`,
+        description,
+        "subdomain": "pocketbotcup",
+        "hold_third_place_match": true,
+        "accept_attachments": true,
+        "signup_cap": 32,
+        "show_rounds": true,
+        "game_id": 54849,
+        "game_name": "Tooth and Tail"
+      }
 
-      console.log(`Created tournament: ${tournament.id}`);
-      currentTourney = tournament.id;
+      if (tType === "Community" || tType === "Pocketbot") {
+       tournament.name = `${tType} Cup #${tNum}`;
+       tournament.start_at = new Date(Date.now() + (60 * 60 * 1000)); // Start in 1h
+      }
+
+      const tourney = await client.tournaments.create({ tournament });
+
+      console.log(`Created tournament: ${tourney.id}`);
+      currentTourney = tourney.id;
 
       // PB announces it
-      bot.createMessage(tourneyChan, `:trophy: A new ${tType} Cup has begun! Follow it on Challonge here: http://pocketbotcup.challonge.com/${tType.toLowerCase()}cup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
+      bot.createMessage(tourneyChan, `:trophy: A new ${tType} Cup has opened! Follow it on Challonge here: http://pocketbotcup.challonge.com/${tType.toLowerCase()}cup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
     } catch (e) {
       console.error(e);
     }
@@ -549,7 +559,7 @@ module.exports = (bot) => {
   // Tournament Commands
   // ===================================
 
-  bot.registerCommand("makecup", (msg) => {
+  bot.registerCommand("makecup", (msg, args) => {
     console.log('Attempting to make cup...');
     msg?.delete();
 
@@ -557,7 +567,7 @@ module.exports = (bot) => {
       return msg.channel.createMessage("Cup currently in progress, try again later.");
     }
 
-    makeTourney(msg);
+    makeTourney(msg, args);
   }, {
     description: "Creates a new Pocketbot or Community Cup",
     cooldown: 1000 * 60 * 60,
@@ -720,7 +730,11 @@ module.exports = (bot) => {
     }
   });
 
-  // TODO - bot.registerCommand("tourney", (msg)=> {});
+  bot.registerCommand("tourney", (msg)=> {
+
+  }, {
+    description: "Registers a custom tournament for the community"
+  });
   // TODO - bot.registerCommand("starttourney", (msg)=> {});
   // TODO - bot.registerCommand("endtourney", (msg)=> {});
 
