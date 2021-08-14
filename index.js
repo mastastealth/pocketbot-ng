@@ -63,12 +63,13 @@ const tourney = require("./cmds/tourney")(bot);
 const admin = require("./cmds/admin")(bot);
 const bank = require("./cmds/bank")(bot);
 const other = require("./cmds/other")(bot);
+const info = require("./cmds/info")(bot);
 
 try {
   tourney.register();
   admin.register();
   bank.register();
-  // TODO - info.register();
+  info.register();
   // TODO - quotes.register();
   other.register();
 
