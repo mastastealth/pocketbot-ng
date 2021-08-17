@@ -134,8 +134,8 @@ module.exports = (bot) => {
   });
 
   bot.registerCommand("region", async (msg, args) => {
-    if (args[1]) {
-      let region = args[1].toLowerCase();
+    if (args[0]) {
+      let region = args[0].toLowerCase();
 
       if (region !== "na" && region !== "eu" && region !== "au") {
         msg.channel.createMessage("🕑 You didn't specify a region. Please choose one of the following: `NA | EU | AU`",data);
