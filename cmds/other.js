@@ -133,6 +133,28 @@ module.exports = (bot) => {
     aliases: ["guides"]
   });
 
+  bot.registerCommand("region", async (msg, args) => {
+    if (args[1]) {
+      let region = args[1].toLowerCase();
+
+      if (region !== "na" && region !== "eu" && region !== "au") {
+        msg.channel.createMessage("🕑 You didn't specify a region. Please choose one of the following: `NA | EU | AU`",data);
+      } else {
+        try {
+          await msg.member.addRole(x[region]);
+          msg.channel.createMessage(`Successfully added to the ${region.toUpperCase()} role.`);
+        } catch(e) {
+          msg.channel.createMessage("🕑 Failed to role.");
+          console.error(e);
+        }
+      }
+    } else {
+      msg.channel.createMessage("🕑 You didn't specify a region. Please choose one of the following: `NA | EU | AU`");
+    }
+  }, {
+    description: "Assign yourself one of 3 region roles for PBC access: NA | EU | AU"
+  })
+
   return {
     register() { console.info("Registered other commands."); }
   };

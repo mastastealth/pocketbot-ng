@@ -59,7 +59,7 @@ module.exports = (bot) => {
   }
 
   // This will create the tournament in Challonge
-  async function makeTourney(msg, args) {
+  async function makeTourney(msg, args = []) {
     bot.createMessage(tourneyChan, `🕑 Creating a new tournament...`);
   
     let description = "Welcome to the new and fully automated <strong>Pocketbot Cup</strong>! This is a weekly cup run by Pocketbot every Monday to let players enjoy a small dose of competition, while helping analyze replay data with the latest patch. If you have any questions or suggestions, talk to Mastastealth on the <a href='http://discord.gg/pockwatch'>PWG Discord</a>.";
@@ -74,7 +74,6 @@ module.exports = (bot) => {
         tType = msg.author.username.replace(' ','');
         tourneyChan = x.tourney;
       } else {
-        tourneyChan = (process.env.LOCALTEST) ? x.testing : x.pbcup;
         setTimeout(() => {
           const cmd = Object.values(bot.commands).filter(cmd => cmd.label.includes("startcup"))[0];
           cmd.execute(null, null, { client: bot });
@@ -262,6 +261,7 @@ module.exports = (bot) => {
     tRound = 1;
     tType = "Pocketbot";
     currentTourney = null;
+    tourneyChan = (process.env.LOCALTEST) ? x.testing : x.pbcup;
 
     // Remove ALL competitors
     if (Object.keys(tPlayers).length) {

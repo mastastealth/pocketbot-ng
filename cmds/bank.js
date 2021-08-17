@@ -14,7 +14,7 @@ module.exports = (bot) => {
   });
 
   bot.registerCommand("transfer", async (msg, args) => {
-    const who = helpers.getUser(args[0]);
+    const who = helpers.getUser(args?.[0]);
     const give = parseInt(args[1]);
 
     if (args.length !== 2) {
