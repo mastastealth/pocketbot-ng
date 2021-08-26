@@ -29,7 +29,7 @@ module.exports = (bot) => {
 
         tData.participants.forEach(obj => tPlayers[obj.participant.misc] = obj.participant.id);
         tCount = Object.keys(tPlayers).length;
-        if (!tData.url.includes('pocketbotcup') || !tData.url.includes('communitycup')) {
+        if (!tData.url.includes('pocketbotcup')) {
           tourneyChan = x.tourney;
         }
 
@@ -127,7 +127,7 @@ module.exports = (bot) => {
     ) {
       try {
         if (!tid) await client.tournaments.proc_checkin(cTourneyScoped); // Don't process checkins for custom tournies
-        if (tid && args[1] && args[1].startsWith("shuffle")) await client.participants.randomize(cTourneyScoped);
+        if (tid && args?.[1].startsWith("shuffle")) await client.participants.randomize(cTourneyScoped);
 
         await client.tournaments.start(cTourneyScoped); // Start tourney
         const cTourney = await getTourneyData(cTourneyScoped);
@@ -192,7 +192,7 @@ module.exports = (bot) => {
   // Wraps up a tournament
   async function finishTourney(tid) {
     const tourney = tid || currentTourney;
-    const notPBCup = (Object.keys(tPlayers).length > 0) ? false : true;
+    const notPBCup = !Object.keys(tPlayers).length;
     const tChan = notPBCup ? x.tourney : tourneyChan;
 
     const tName = notPBCup ? cTourney.name : `A ${tType} Cup`;
