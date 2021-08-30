@@ -109,7 +109,7 @@ module.exports = (bot) => {
       currentTourney = tourney.id;
 
       // PB announces it
-      bot.createMessage(tourneyChan, `:trophy: A new ${args.length ? name : `${tType} Cup`} has opened! Follow it on Challonge here: http://pocketbotcup.challonge.com/${tType.toLowerCase()}cup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
+      bot.createMessage(tourneyChan, `:trophy: A new ${args?.length ? name : `${tType} Cup`} has opened! Follow it on Challonge here: http://pocketbotcup.challonge.com/${tType.toLowerCase()}cup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
     } catch (e) {
       console.error(e);
     }
