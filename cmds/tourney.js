@@ -556,7 +556,11 @@ module.exports = (bot) => {
       checkRound(msg);
     } catch (err) {
       console.error(err);
-      msg.channel.createMessage(`Dang it, something went wrong with the score submission. Try again? If you think you did everything correctly, talk to <@${x.stealth}>! :scream: \n \`\`\`Error: ${err}\`\`\``);
+      if (err.includes("Cannot read property 'id' of undefined")) {
+        msg.channel.createMessage("Hold your ponies! Please submit again once the previous round has finished.");
+      } else {
+        msg.channel.createMessage(`Dang it, something went wrong with the score submission. Try again? If you think you did everything correctly, talk to <@${x.stealth}>! :scream: \n \`\`\`Error: ${err}\`\`\``);
+      }
     }
   }
 
