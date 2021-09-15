@@ -1,7 +1,7 @@
 const udata = require("../core/unitdata");
 
 module.exports = (bot) => {
-  const { vars: x, main, helpers } = bot.PB;
+  const { vars: x } = bot.PB;
 
   bot.registerCommand("info", (msg, args) => {
     let item = args?.[0].toLowerCase() || "";
@@ -120,15 +120,15 @@ module.exports = (bot) => {
       // Wiki Link
       if (u.units[item].struct) {
         if (item != "pig" && item != "gristmill") {
-          url = `\n\nMore info: <https://https://web.archive.org/web/20171223174349/toothandtailwiki.com/structures/${item}>`;
+          url = `\n\nv${u.version} | More info: <https://https://web.archive.org/web/20171223174349/toothandtailwiki.com/structures/${item}>`;
         } else {
-          url = "\n\nMore info: <https://https://web.archive.org/web/20171223174349/toothandtailwiki.com/structures/gristmills-farms-pigs/>";
+          url = `\n\nv${u.version} | More info: <https://https://web.archive.org/web/20171223174349/toothandtailwiki.com/structures/gristmills-farms-pigs/>`;
         }
       } else if (!u.units[item].struct && tier != "n/a") {
         let t = u.units[item].tier;
-        url = (t && t != 3) ? `\n\nMore info: <https://https://web.archive.org/web/20171223174349/toothandtailwiki.com/units/${item}s>` : `\n\nMore info: <https://https://web.archive.org/web/20171223174349/toothandtailwiki.com/units/${item}>`;
+        url = (t && t != 3) ? `\n\nv${u.version} | More info: <https://https://web.archive.org/web/20171223174349/toothandtailwiki.com/units/${item}s>` : `\n\nv${u.version} | More info: <https://https://web.archive.org/web/20171223174349/toothandtailwiki.com/units/${item}>`;
       } else {
-        url = "\n\nMore info: <https://https://web.archive.org/web/20171223174349/toothandtailwiki.com/>";
+        url = `\n\nv${u.version} | More info: <https://https://web.archive.org/web/20171223174349/toothandtailwiki.com/>`;
       }
     
       ucost = `${ucost}   `;
