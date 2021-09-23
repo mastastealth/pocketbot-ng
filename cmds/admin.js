@@ -46,10 +46,14 @@ module.exports = (bot) => {
   });
 
   bot.registerCommand("purge", async (msg, args) => {
-    const messages = await msg.channel.getMessages({ limit: parseInt(args[0]) });
-    const mIDs = messages.map(m => m.id);
-  
-    bot.deleteMessages(msg.channel.id, mIDs, "Purging some stuff with bot.");
+    try {
+      const messages = await msg.channel.getMessages({ limit: parseInt(args[0]) });
+      const mIDs = messages.map(m => m.id);
+    
+      await bot.deleteMessages(msg.channel.id, mIDs, "Purging some stuff with bot.");
+    } catch(e) {
+      msg.channel.createMessage(`🕑 \`${e}\``);
+    }
   }, {
     description: "Delete a number of messages.",
     requirements: {
