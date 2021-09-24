@@ -440,6 +440,13 @@ ecc-jsbn@~0.1.1:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
 
+eris-components@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/eris-components/-/eris-components-1.0.1.tgz#7ada1f61165a0533bac41407f46c251e8a124c7b"
+  integrity sha512-aoSG0XxqzI8EMk49RefXAXLwwMN8dzL8Byo5kznyKOuJ2h9Dc86vLURysAkKNh12L++gF28fPsSlOozhBBgiFw==
+  dependencies:
+    eris "^0.15.1"
+
 eris@^0.15.1:
   version "0.15.1"
   resolved "https://registry.yarnpkg.com/eris/-/eris-0.15.1.tgz#6b44e6d4675c271def7484725a0edede9e798960"

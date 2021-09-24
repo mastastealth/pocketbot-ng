@@ -109,7 +109,11 @@ module.exports = (bot) => {
       currentTourney = tourney.id;
 
       // PB announces it
-      bot.createMessage(tourneyChan, `:trophy: A new ${args?.length ? name : `${tType} Cup`} has opened! Follow it on Challonge here: http://pocketbotcup.challonge.com/${tType.toLowerCase()}cup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`);
+      bot.sendComponents(
+        tourneyChan, 
+        x.components.SignupBtn, 
+        `:trophy: A new ${args?.length ? name : `${tType} Cup`} has opened! Follow it on Challonge here: http://pocketbotcup.challonge.com/${tType.toLowerCase()}cup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`
+      );
     } catch (e) {
       console.error(e);
     }
@@ -393,7 +397,10 @@ module.exports = (bot) => {
         // Add custom role
         if (tRole) msg.member.addRole(tRole);
 
-        msg.channel.createMessage(`<@${msg.author.id}> has entered the tournament! ${(cid) ? ":comet:" : ""}`);
+        const txt = `<@${msg.author.id}> has entered the tournament! ${(cid) ? ":comet:" : ""}`;
+        if (msg.resBody) { bot.replyInteraction(msg.resBody, [], txt); }
+        else { msg.channel.createMessage(txt); }
+
         return false;
       }
 
@@ -407,7 +414,9 @@ module.exports = (bot) => {
       if (tCount >= 17) {
         msg.channel.createMessage(`<@${msg.author.id}> is on standby! ${(cid) ? ":comet:" : ""}`);
       } else {
-        msg.channel.createMessage(`<@${msg.author.id}> has entered the Cup! ${(cid) ? ":comet:" : ""}`);
+        const txt = `<@${msg.author.id}> has entered the Cup! ${(cid) ? ":comet:" : ""}`;
+        if (msg.resBody) { bot.replyInteraction(msg.resBody, [], txt); }
+        else { msg.channel.createMessage(txt); }
       }
 
       // Check if we've hit our player limit 
@@ -639,7 +648,7 @@ module.exports = (bot) => {
   });
 
   bot.registerCommand("signup", async (msg, args) => {
-    msg.delete();
+    msg.delete?.();
 
     const cid = await fb.getProp(msg.author.id, "challonge"); // Challonge username (optional for PB Cup)
     const tid = args[0] || null;
