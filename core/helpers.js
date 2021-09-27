@@ -18,7 +18,7 @@ module.exports = (bot) => {
     },
     exeCmd(cmd, { resBody, message: msg = null, args = []}) {
       const command = Object.values(bot.commands).find(c => c.label.includes(cmd));
-      msg.resBody = resBody;
+      if (msg) msg.resBody = resBody;
       command.execute(msg, args);
     }
   }
