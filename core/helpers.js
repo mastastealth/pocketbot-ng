@@ -16,7 +16,10 @@ module.exports = (bot) => {
     getUser(txt) {
       return txt?.match(/\b\d{10,}\b/g)[0];
     },
-    exeCmd(cmd, { resBody = null, message: msg = null, args = []}) {
+    exeCmd(cmd, data) {
+      const msg = data?.message;
+      const args = data?.args || [];
+      const resBody = data?.resBody;
       const command = Object.values(bot.commands).find(c => c.label.includes(cmd));
       if (msg && resBody) msg.resBody = resBody;
       command.execute(msg, args);
