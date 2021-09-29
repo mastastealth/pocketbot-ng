@@ -52,7 +52,8 @@ module.exports = (ErisC) => {
     // Roles -----------------------
     noob: "195983997413752832", // Recruit
     member: "99502270579740672", // Veteran
-    lfg: "238808560106995712", // Looking for game
+    ptg: "238808560106995712", // Playing the game
+    lfg: "892587568514871349", // Looking for game
     mod: "99565011696910336",
     admin: "103552189221326848", //Developer
     competitor: "294543037411885058",

@@ -30,6 +30,7 @@ module.exports = {
     // Someone goes offline
     if (user.state === "offline") {
       // Check if they are on ready list
+      if (fromRoles.includes(x.ptg)) user.removeRole(x.ptg, "Went offline, removed PTG");
       if (fromRoles.includes(x.lfg)) user.removeRole(x.lfg, "Went offline, removed LFG");
     }
 
@@ -46,16 +47,17 @@ module.exports = {
           !fromRoles.length
           || (!fromRoles.includes(x.noob) && !fromRoles.includes(x.member))
         ) user.addRole(x.noob, "Add recruit to new player");
-        // Add to LFG
-        user.addRole(x.lfg, "Went offline, removed LFG");
+        // Add to PTG
+        user.addRole(x.ptg, "Went offline, removed PTG");
 
       } else {
-        // If he's not playing/streaming it, and has LFG, remove
-        if (fromRoles.includes(x.lfg)) user.removeRole(x.lfg, "Not playing TnT, removed LFG");
+        // If he's not playing/streaming it, and has PTG, remove
+        if (fromRoles.includes(x.ptg)) user.removeRole(x.ptg, "Not playing TnT, removed PTG");
       }
     } else {
-      // Or if he stopped playing/streaming, remove LFG
-      if (fromRoles.includes(x.lfg)) user.removeRole(x.lfg, "Not playing TnT, removed LFG");
+      // Or if he stopped playing/streaming, remove PTG
+      if (fromRoles.includes(x.ptg)) user.removeRole(x.ptg, "Not playing TnT, removed PTG");
+      if (fromRoles.includes(x.lfg)) user.removeRole(x.lfg, "Went offline, removed LFG");
     }
   },
   countdown({ bot, msg, count, txt = false }) {
@@ -388,14 +390,14 @@ module.exports = {
       if (time.getHours() === tourneyHrs[1]) who = vars.eu;
       if (time.getHours() === tourneyHrs[2]) who = vars.na;
 
-      bot.createMessage(vars.memchan, `Attention <@&${vars.lfg}>, <@&${who}>, or those wanting to, a new Pocketbot Cup has just opened signups in <#${vars.pbcup}>!`);
+      bot.createMessage(vars.memchan, `Attention <@&${vars.ptg}>, <@&${who}>, or those <@&${vars.lfg}>, a new Pocketbot Cup has just opened signups in <#${vars.pbcup}>!`);
     });
 
     cron.schedule(`0 45 ${tourneyHrs[0]},${tourneyHrs[1]},${tourneyHrs[2]} * * 1`, function () {
       console.log("Reminding about Cup.", "OK");
       helpers.exeCmd("signoutremind");
 
-      bot.createMessage(vars.memchan, `For anyone <@&${vars.lfg}> or just hanging around, there is a Pocketbot Cup currently open for signups, it starts in 15 minutes over in <#${vars.pbcup}>. Go win some ${vars.emojis.wip}!`);
+      bot.createMessage(vars.memchan, `For anyone <@&${vars.ptg}> or <@&${vars.lfg}>, there is a Pocketbot Cup currently open for signups, it starts in 15 minutes over in <#${vars.pbcup}>. Go win some ${vars.emojis.wip}!`);
     });
 
     cron.schedule(`59 59 ${tourneyHrs[0]},${tourneyHrs[1]},${tourneyHrs[2]} * * 1`, function () {

@@ -153,7 +153,33 @@ module.exports = (bot) => {
     }
   }, {
     description: "Assign yourself one of 3 region roles for PBC access: NA | EU | AU"
-  })
+  });
+
+  bot.registerCommand("lfg", async (msg, args) => {
+    try {
+      await msg.member.addRole(x.lfg);
+      msg.channel.createMessage(`🕑 The world knows you are looking for a game now. Good luck.`);
+    } catch(e) {
+      msg.channel.createMessage("🕑 Failed to add role.");
+      console.error(e);
+    }
+  }, {
+    description: "Assign yourself a 'Looking for Game' role",
+    aliases: ["ready"]
+  });
+
+  bot.registerCommand("nolfg", async (msg, args) => {
+    try {
+      await msg.member.removeRole(x.lfg);
+      msg.channel.createMessage(`🕑 ok bye.`);
+    } catch(e) {
+      msg.channel.createMessage("🕑 Failed to remove role.");
+      console.error(e);
+    }
+  }, {
+    description: "Unassign yourself the 'Looking for Game' role",
+    aliases: ["unready", "notlfg"]
+  });
 
   return {
     register() { console.info("Registered other commands."); }
