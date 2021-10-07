@@ -158,7 +158,8 @@ module.exports = (bot) => {
   bot.registerCommand("lfg", async (msg, args) => {
     try {
       await msg.member.addRole(x.lfg);
-      msg.channel.createMessage(`🕑 The world knows you are looking for a game now. Good luck.`);
+      msg.delete();
+      msg.channel.createMessage(`🕑 The world knows you are <@&${x.lfg}> now. Good luck.`);
     } catch(e) {
       msg.channel.createMessage("🕑 Failed to add role.");
       console.error(e);
@@ -171,6 +172,7 @@ module.exports = (bot) => {
   bot.registerCommand("nolfg", async (msg, args) => {
     try {
       await msg.member.removeRole(x.lfg);
+      msg.delete();
       msg.channel.createMessage(`🕑 ok bye.`);
     } catch(e) {
       msg.channel.createMessage("🕑 Failed to remove role.");
