@@ -378,7 +378,7 @@ module.exports = {
     }
   },
   pbcCron(bot) {
-    let tourneyHrs = [13, 17, 22];
+    let tourneyHrs = [13, 18, 22];
     const { vars, helpers } = bot.PB;
 
     cron.schedule(`0 0 ${tourneyHrs[0]},${tourneyHrs[1]},${tourneyHrs[2]} * * 1`, function () {
