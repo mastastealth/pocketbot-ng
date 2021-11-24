@@ -503,6 +503,7 @@ module.exports = (bot) => {
         if (msg.action) {
           msg.action.createMessage(txt);
         } else {
+          msg.delete?.();
           msg.channel.createMessage(txt);
         }
 
@@ -527,6 +528,7 @@ module.exports = (bot) => {
         if (msg.action) {
           msg.action.createMessage(txt);
         } else {
+          msg.delete?.();
           msg.channel.createMessage(txt);
         }
       }
@@ -842,13 +844,12 @@ module.exports = (bot) => {
   bot.registerCommand(
     "signup",
     async (msg, args) => {
-      msg.delete?.();
-
       const cid = await fb.getProp(msg.author.id, "challonge"); // Challonge username (optional for PB Cup)
       const tid = args[0] || null;
 
       // Check for an actual tournament
       if (!currentTourney && !tid) {
+        msg.delete?.();
         return msg.channel.createMessage(
           "🕑 There are no Pocketbot Cups currently running. :thinking: Try again some other time!"
         );
@@ -856,6 +857,7 @@ module.exports = (bot) => {
 
       // Check if you already signed up
       if (tPlayers[msg.author.id] && !tid) {
+        msg.delete?.();
         return msg.channel.createMessage("🕑 You've already signed up. :tada:");
       }
 
@@ -864,6 +866,7 @@ module.exports = (bot) => {
         const tRole = null; // TODO - Check for custom tRoles
         addPlayer(msg, cid, tid, tRole);
       } else {
+        msg.delete?.();
         msg.channel.createMessage(
           "🕑 The tournament has reached the maximum number of entries. Hope to see you next week!"
         );
