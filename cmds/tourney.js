@@ -501,7 +501,7 @@ module.exports = (bot) => {
           cid ? ":comet:" : ""
         }`;
         if (msg.action) {
-          bot.replyInteraction(msg.action, [], txt);
+          msg.action.createMessage(txt);
         } else {
           msg.channel.createMessage(txt);
         }
@@ -525,7 +525,7 @@ module.exports = (bot) => {
           cid ? ":comet:" : ""
         }`;
         if (msg.action) {
-          bot.replyInteraction(msg.action, [], txt);
+          msg.action.createMessage(txt);
         } else {
           msg.channel.createMessage(txt);
         }
