@@ -17,100 +17,130 @@ module.exports = (bot) => {
     },
   ];
 
-  bot.registerCommand("troubleshoot", (msg, args) => {
-    if (!args || !args[0]) {
-      msg.channel.createMessage(stripIndents`
-        What seems to be the trouble with your game? Type in '!troubleshoot #' by choosing an option below:
-  
-        :one: Unable to load \`mf.dll\`
-        :two: Game is slow on laptop
-        :three: Steam crashes
-        :four: White screen of death
-        :five: Out of Memory / W10 + AMD
-        :five: Other`);
-    } else {
-      let k = args[0];
+  bot.PB.slashCmds.push({
+    info: {
+      name: "troubleshoot",
+      description:
+        "Get solutions to some common technical issues with the game.",
+      options: [
+        {
+          name: "issue",
+          description: "Select from one of the known issues below...",
+          type: 3,
+          required: true,
+          choices: [
+            {
+              name: "Forgot where the TnT files are located",
+              value: "dir",
+            },
+            {
+              name: "Won't run anymore on W10 and an AMD card",
+              value: "amd",
+            },
+            {
+              name: "Unable to load `mf.dll`",
+              value: "dll",
+            },
+            {
+              name: "Game is slow on laptop",
+              value: "igp",
+            },
+            {
+              name: "Steam crashes",
+              value: "steam",
+            },
+            {
+              name: "Get a white screen of death",
+              value: "wsod",
+            },
+            {
+              name: "Other",
+              value: "other",
+            },
+          ],
+        },
+      ],
+    },
+    async cmd(action) {
+      let k = action.data.options[0].value;
       let res;
 
       switch (k) {
-        case ":one:":
-        case "1":
         case "dll":
           res =
             "**Unable to load `mf.dll`**\nJust install the one matching your specific OS (and build): <https://support.microsoft.com/en-us/help/3145500/media-feature-pack-list-for-windows-n-editions>";
           break;
-        case ":two:":
-        case "2":
         case "igp":
           res =
             "**Game is slow on laptop**\nIt's possible your laptop is running TnT off of the integrated card instead of the GPU. Try manually setting the game's .exe to specifically use the dedicated card.";
           break;
-        case ":three:":
         case "steam":
-        case "3":
           res =
             "**Steam crashes**\nThis may be a problem with AVG or Avast. To play the game you can either temporarily disable the anti-virus program, or add `C:\\Program Files (x86)\\Steam\\steamapps\\common\\ToothAndTail\\` to the program's exemptions.";
           break;
-        case ":four:":
-        case "4":
         case "wsod":
           res =
             "**White screen of death**\nThere are a few things you can try: switch to integrated graphics, run in windowed mode, nuke your Options.xml file.";
           break;
-        case ":five:":
-        case "5":
+        case "amd":
           res =
             "Disable fullscreen optimizations as illustrated here: https://media.discordapp.net/attachments/134810918113509376/590269448896774144/unknown.png";
           break;
-        case ":six:":
-        case "6":
+        case "other":
           res = `**Other**\nFor any other problems, ping <@${x.stealth}> in <#${x.trouble}>. :sweat_smile:`;
           break;
-        case "files":
-        case "folders":
         case "dir":
           res =
             "Windows: `%AppData%\\ToothAndTail\\`\nLinux/Mac: `~/.config/ToothAndTail/`\nLook for `Options.xml`, `log.html`, or the `replays` folder.";
           break;
       }
 
-      msg.channel.createMessage(res);
-    }
+      action.createMessage(res);
+    },
   });
 
-  bot.registerCommand(
-    "region",
-    async (msg, args) => {
-      if (args[0]) {
-        let region = args[0].toLowerCase();
+  bot.PB.slashCmds.push({
+    info: {
+      name: "region",
+      description:
+        "Assign yourself one of 3 region roles for Pocketbot Cup access.",
+      options: [
+        {
+          name: "zone",
+          description: "Select the zone that best correlates to yours...",
+          type: 3,
+          required: true,
+          choices: [
+            {
+              name: "North America (Starts @ 7PM EST)",
+              value: "na",
+            },
+            {
+              name: "Europe (Starts @ 2PM EST)",
+              value: "eu",
+            },
+            {
+              name: "Pacific (Starts @ 10AM EST)",
+              value: "au",
+            },
+          ],
+        },
+      ],
+    },
+    async cmd(action) {
+      const region = action.data.options[0].value;
 
-        if (region !== "na" && region !== "eu" && region !== "au") {
-          msg.channel.createMessage(
-            "🕑 You didn't specify a region. Please choose one of the following: `NA | EU | AU`",
-            data
-          );
-        } else {
-          try {
-            await msg.member.addRole(x[region]);
-            msg.channel.createMessage(
-              `Successfully added to the ${region.toUpperCase()} role.`
-            );
-          } catch (e) {
-            msg.channel.createMessage("🕑 Failed to role.");
-            console.error(e);
-          }
-        }
-      } else {
-        msg.channel.createMessage(
-          "🕑 You didn't specify a region. Please choose one of the following: `NA | EU | AU`"
+      try {
+        await action.member.addRole(x[region]);
+        return action.createMessage(
+          `Successfully added to the ${region.toUpperCase()} role.`
         );
+      } catch (e) {
+        console.error(e);
+        return action.createMessage("🕑 Failed to role.");
       }
     },
-    {
-      description:
-        "Assign yourself one of 3 region roles for PBC access: NA | EU | AU",
-    }
-  );
+  });
 
   bot.PB.slashCmds.push({
     info: {
