@@ -1,44 +1,55 @@
 const fs = require("fs");
 const path = require("path");
 
-const emotes = function() {
-	const _emotes = [];
-	const	_gifemotes = [];
+const emotes = function () {
+  const _emotes = [];
+  const _gifemotes = [];
 
-	fs.readdir(path.join(__dirname, "..", "emoji"), (err, files) => {
-		if (err) return console.error(err);
+  fs.readdir(path.join(__dirname, "..", "emoji"), (err, files) => {
+    if (err) return console.error(err);
 
-		for (let i = 0; i < files.length; i++) {
-			if (path.parse(files[i]).ext === ".gif") {
-				_gifemotes.push(path.parse(files[i]).name);
-			} else {
-				_emotes.push(path.parse(files[i]).name);
-			}
-		}
-	});
+    for (let i = 0; i < files.length; i++) {
+      if (path.parse(files[i]).ext === ".gif") {
+        _gifemotes.push(path.parse(files[i]).name);
+      } else {
+        _emotes.push(path.parse(files[i]).name);
+      }
+    }
+  });
 
-	return {
-		emotes: _emotes,
-		gifs: _gifemotes
-	};
+  return {
+    emotes: _emotes,
+    gifs: _gifemotes,
+  };
 };
 
-module.exports = (ErisC) => {
+module.exports = (CONSTS) => {
   return {
     chan: "99240110486192128", // PWG Server/Main Channel ID
     components: {
-      SignupBtn: new ErisC.Button()
-        .setLabel('Sign Up for PBC')
-        .setID('pbc-signup')
-        .setStyle('blurple')
-        .setEmoji('✅')
+      TestBtn: {
+        type: 2,
+        custom_id: "pb-test-btn",
+        label: "TEST ME",
+        style: CONSTS.ButtonStyles.PRIMARY,
+      },
+      SignupBtn: {
+        type: 2,
+        custom_id: "pbc-signup-v2",
+        label: "Sign Up for PBC",
+        style: CONSTS.ButtonStyles.PRIMARY,
+        emoji: {
+          id: null,
+          name: "✅",
+        },
+      },
     },
     firebasecfg: {
       apiKey: process.env.FBKEY2,
       authDomain: "pocketbot-40684.firebaseapp.com",
       databaseURL: "https://pocketbot-40684.firebaseio.com",
       storageBucket: "pocketbot-40684.appspot.com",
-      messagingSenderId: "969731605928"
+      messagingSenderId: "969731605928",
     },
 
     // Users -----------------------
@@ -70,9 +81,9 @@ module.exports = (ErisC) => {
 
     // Channels --------------------
     memchan: "245596925531783168", // #toothandtail
-    rules: "435940618544480266", 
+    rules: "435940618544480266",
     tourney: "199648848337960961",
-    pbcup: "410202459039072276", 
+    pbcup: "410202459039072276",
     history: "196362695367196672",
     playground: "172429393501749248",
     modbiz: "180446374704316417",
@@ -87,10 +98,10 @@ module.exports = (ErisC) => {
     emotes: emotes().emotes,
     gifemotes: emotes().gifs,
     gifaliases: {
-      patch17: "schatzmeteor"
+      patch17: "schatzmeteor",
     },
     aliases: {
-      yourmother: "yomama"
+      yourmother: "yomama",
     },
 
     //Custom emojis
@@ -136,13 +147,13 @@ module.exports = (ErisC) => {
       qm: "<:quartermaster:245224151470571521>",
       //Other
       wip: "<:wip:247433292587073536>",
-      discord: "<:logo_discord:266353098887397386>"
+      discord: "<:logo_discord:266353098887397386>",
     },
 
     // DON'T DELETE These
     // ==================
     consts: {
-      MAX_TIMEOUT: 10080 //Max mute period, 1 week for now
-    }
-  }
+      MAX_TIMEOUT: 10080, //Max mute period, 1 week for now
+    },
+  };
 };

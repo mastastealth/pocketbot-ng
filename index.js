@@ -3,29 +3,30 @@
 // ===================================
 require("dotenv").config();
 const Eris = require("eris");
-const ErisC = require("eris-components");
+const Constants = Eris.Constants;
 
-const ebot = new Eris.CommandClient(
-  process.env.TOKEN, {},
+const bot = new Eris.CommandClient(
+  process.env.TOKEN,
+  {},
   {
     description: "Pocketbot NG - powered by Eris",
     owner: "Mastastealth",
-    prefix: process.env.LOCALTEST ? "d!" : "!"
+    prefix: process.env.LOCALTEST ? "d!" : "!",
   }
 );
 
-const bot = ErisC.Client(ebot);
-  
 // ===================================
 // Modules
 // ===================================
 const main = require("./core/main");
-const vars = require("./core/vars")(ErisC);
+const vars = require("./core/vars")(Constants);
 
 // Add some global PB-specific properties to global bot object.
 bot.PB = {
   vars,
-  main
+  main,
+  slashCmd: {},
+  slashCmds: [],
 };
 
 bot.PB.helpers = require("./core/helpers")(bot);
@@ -36,25 +37,61 @@ bot.PB.fb = require("./core/firebase")(bot);
 // ===================================
 
 bot.on("ready", () => {
-  console.log(`Bot logged in ${process.env.LOCALTEST ? "locally" : "online"} successfully.`);
+  console.log(
+    `Bot logged in ${
+      process.env.LOCALTEST ? "locally" : "online"
+    } successfully.`
+  );
   console.log(Object.keys(bot.commands));
+
+  // Test message with component
+  // bot.createMessage(vars.testing, {
+  //   content: `Test`,
+  //   components: [
+  //     {
+  //       type: 1,
+  //       components: [vars.components.TestBtn],
+  //     },
+  //   ],
+  // });
+
+  // Register all imported commands
+  bot.PB.slashCmds.forEach((cmd) => {
+    bot.createGuildCommand(vars.chan, cmd.info);
+    bot.PB.slashCmd[cmd.info.name] = cmd.cmd;
+    console.log(`Registered /${cmd.info.name}`);
+  });
 });
 
-bot.on("clickButton", (resBody) => {
-  const { message, member, channel_id } = resBody;
-  const id = resBody.data.custom_id;
-  const chan = bot.guilds.get(vars.chan).channels.get(channel_id);
-  const mem = bot.guilds.get(vars.chan).members.get(member.user.id);
+bot.on("interactionCreate", (action) => {
+  const { message, member } = action;
+  console.log(action, message);
 
-  // Update message when passing to commands
-  message.member = mem;
-  message.author = mem.user;
-  message.channel = chan;
+  if (action instanceof Eris.ComponentInteraction) {
+    const id = action.data.custom_id;
+    const mem = bot.guilds.get(vars.chan).members.get(member.user.id);
 
-  switch(id) {
-    case "pbc-signup":
-      bot.PB.helpers.exeCmd("signup", { resBody, message });
-      return true;
+    // Update message when passing to commands
+    message.member = mem;
+    message.author = mem.user;
+
+    switch (id) {
+      case "pbc-signup-v2":
+        bot.PB.helpers.exeCmd("signup", { action, message });
+        return true;
+      default:
+        console.log("Component created.");
+        return action.createMessage({
+          content: "Responded.",
+        });
+    }
+  }
+
+  if (action instanceof Eris.CommandInteraction) {
+    const id = action.data.name;
+
+    console.log(`Attempting to execute: ${id}`);
+    return bot.PB.slashCmd[id]?.(action);
   }
 });
 
@@ -72,7 +109,8 @@ bot.on("messageCreate", async (msg) => {
   main.checkSpam(msg, bot);
   main.checkToxic(msg, bot);
 
-  if (!msg.channel.guild) console.log(`[DIRECT MESSAGE] ${msg.author.username}: ${msg.content}`);
+  if (!msg.channel.guild)
+    console.log(`[DIRECT MESSAGE] ${msg.author.username}: ${msg.content}`);
 });
 
 // ===================================

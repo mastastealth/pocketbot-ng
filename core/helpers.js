@@ -7,7 +7,7 @@ module.exports = (bot) => {
       for (const roleID of reqRoles) {
         if (roles.includes(roleID)) return true;
       }
-  
+
       return false;
     },
     hasModPerms(roles) {
@@ -19,10 +19,12 @@ module.exports = (bot) => {
     exeCmd(cmd, data) {
       const msg = data?.message;
       const args = data?.args || [];
-      const resBody = data?.resBody;
-      const command = Object.values(bot.commands).find(c => c.label.includes(cmd));
-      if (msg && resBody) msg.resBody = resBody;
+      const action = data?.action;
+      const command = Object.values(bot.commands).find((c) =>
+        c.label.includes(cmd)
+      );
+      if (msg && action) msg.action = action;
       command.execute(msg, args);
-    }
-  }
-}
+    },
+  };
+};
