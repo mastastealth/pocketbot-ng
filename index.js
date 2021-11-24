@@ -44,17 +44,6 @@ bot.on("ready", () => {
   );
   console.log(Object.keys(bot.commands));
 
-  // Test message with component
-  // bot.createMessage(vars.testing, {
-  //   content: `Test`,
-  //   components: [
-  //     {
-  //       type: 1,
-  //       components: [vars.components.TestBtn],
-  //     },
-  //   ],
-  // });
-
   // Register all imported commands
   bot.PB.slashCmds.forEach((cmd) => {
     bot.createGuildCommand(vars.chan, cmd.info);
@@ -65,7 +54,7 @@ bot.on("ready", () => {
 
 bot.on("interactionCreate", (action) => {
   const { message, member } = action;
-  console.log(action, message);
+  // console.log(action, message);
 
   if (action instanceof Eris.ComponentInteraction) {
     const id = action.data.custom_id;

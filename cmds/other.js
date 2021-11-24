@@ -1,7 +1,7 @@
 const stripIndents = require("common-tags").stripIndents;
 
 module.exports = (bot) => {
-  const { vars: x, helpers } = bot.PB;
+  const { vars: x } = bot.PB;
 
   const guides = [
     {
@@ -16,33 +16,6 @@ module.exports = (bot) => {
       inline: true,
     },
   ];
-
-  bot.registerCommand(
-    "lsroles",
-    (msg) => {
-      console.log(msg.member.roles);
-    },
-    {
-      description: "Print member roles into console, only for mods and up",
-      requirements: {
-        custom(msg) {
-          return helpers.hasModPerms(msg.member.roles);
-        },
-      },
-    }
-  );
-
-  bot.registerCommand(
-    "dontask",
-    (msg) => {
-      msg.channel.createMessage(
-        "You shouldn't be asking about this. :eyes: <https://www.twitch.tv/toothandtailtv/clip/CarefulGlamorousWatercressRuleFive>"
-      );
-    },
-    {
-      description: "Something you shouldn't ask about...",
-    }
-  );
 
   bot.registerCommand("troubleshoot", (msg, args) => {
     if (!args || !args[0]) {
@@ -106,30 +79,6 @@ module.exports = (bot) => {
   });
 
   bot.registerCommand(
-    "guide",
-    (msg) => {
-      const fields = [];
-      const embed = {
-        title: "Guides",
-        color: "8281503",
-        description:
-          "If you're new to the game, this is a great place to start and I hope by the end of this, you'll have a solid understanding of Tooth and Tail and be better equipped with knowledge to win your battles.",
-        fields,
-      };
-
-      guides.forEach((g) => {
-        fields.push(g);
-      });
-
-      msg.channel.createMessage({ embed });
-    },
-    {
-      description: "Learn some TnT basics.",
-      aliases: ["guides"],
-    }
-  );
-
-  bot.registerCommand(
     "region",
     async (msg, args) => {
       if (args[0]) {
@@ -163,43 +112,74 @@ module.exports = (bot) => {
     }
   );
 
-  bot.registerCommand(
-    "lfg",
-    async (msg, args) => {
+  bot.PB.slashCmds.push({
+    info: {
+      name: "lfg",
+      description: "Assign yourself a 'Looking for Game' role",
+    },
+    async cmd(action) {
       try {
         await msg.member.addRole(x.lfg);
-        msg.delete();
-        msg.channel.createMessage(
+        return action.createMessage(
           `🕑 The world knows you are <@&${x.lfg}> now. Good luck.`
         );
       } catch (e) {
-        msg.channel.createMessage("🕑 Failed to add role.");
         console.error(e);
+        return action.createMessage("🕑 Failed to add role.");
       }
     },
-    {
-      description: "Assign yourself a 'Looking for Game' role",
-      aliases: ["ready"],
-    }
-  );
+  });
 
-  bot.registerCommand(
-    "nolfg",
-    async (msg, args) => {
+  bot.PB.slashCmds.push({
+    info: {
+      name: "nolfg",
+      description: "Unassign yourself the 'Looking for Game' role",
+    },
+    async cmd(action) {
       try {
-        await msg.member.removeRole(x.lfg);
-        msg.delete();
-        msg.channel.createMessage(`🕑 ok bye.`);
+        await action.member.removeRole(x.lfg);
+        return action.createMessage(`🕑 ok bye.`);
       } catch (e) {
-        msg.channel.createMessage("🕑 Failed to remove role.");
         console.error(e);
+        return action.createMessage("🕑 Failed to remove role.");
       }
     },
-    {
-      description: "Unassign yourself the 'Looking for Game' role",
-      aliases: ["unready", "notlfg"],
-    }
-  );
+  });
+
+  bot.PB.slashCmds.push({
+    info: {
+      name: "dontask",
+      description: "Something you shouldn't ask about...",
+    },
+    cmd(action) {
+      return action.createMessage(
+        "You shouldn't be asking about this. :eyes: <https://www.twitch.tv/toothandtailtv/clip/CarefulGlamorousWatercressRuleFive>"
+      );
+    },
+  });
+
+  bot.PB.slashCmds.push({
+    info: {
+      name: "guide",
+      description: "Learn some TnT basics.",
+    },
+    cmd(action) {
+      const fields = [];
+      const embed = {
+        title: "Guides",
+        color: "8281503",
+        description:
+          "If you're new to the game, this is a great place to start and I hope by the end of this, you'll have a solid understanding of Tooth and Tail and be better equipped with knowledge to win your battles.",
+        fields,
+      };
+
+      guides.forEach((g) => {
+        fields.push(g);
+      });
+
+      return action.createMessage({ embed });
+    },
+  });
 
   bot.PB.slashCmds.push({
     info: {
