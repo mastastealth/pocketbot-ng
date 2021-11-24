@@ -134,7 +134,7 @@ module.exports = (bot) => {
         } has opened! Follow it on Challonge here: http://pocketbotcup.challonge.com/${tType.toLowerCase()}cup_${tNum} \n\n There are 16 slots available. Tournament starts in 1 hour, check-ins open 15 minutes prior to start.`,
         components: [
           {
-            type: 2,
+            type: 1,
             components: [x.components.SignupBtn],
           },
         ],
@@ -1002,16 +1002,22 @@ module.exports = (bot) => {
     }
   });
 
-  bot.registerCommand("bracket", async (msg) => {
-    msg.delete();
+  bot.registerCommand(
+    "bracket",
+    async (msg) => {
+      msg.delete();
 
-    let t = await getTourneyData();
-    let tURL = t.full_challonge_url;
+      let t = await getTourneyData();
+      let tURL = t.full_challonge_url;
 
-    msg.channel.createMessage(
-      `:trophy: The current tournament bracket can be found at: ${tURL}`
-    );
-  });
+      msg.channel.createMessage(
+        `:trophy: The current tournament bracket can be found at: ${tURL}`
+      );
+    },
+    {
+      aliases: ["brackets"],
+    }
+  );
 
   // ====================================
   // Do I need these commands anymore?
