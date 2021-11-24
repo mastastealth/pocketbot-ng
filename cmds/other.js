@@ -119,7 +119,7 @@ module.exports = (bot) => {
     },
     async cmd(action) {
       try {
-        await msg.member.addRole(x.lfg);
+        await action.member.addRole(x.lfg);
         return action.createMessage(
           `🕑 The world knows you are <@&${x.lfg}> now. Good luck.`
         );
