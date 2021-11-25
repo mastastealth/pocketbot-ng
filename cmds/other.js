@@ -239,11 +239,11 @@ module.exports = (bot) => {
   bot.PB.slashCmds.push({
     info: {
       name: "8ball",
-      description: "Seek the wisdom of PB.",
+      description: "🎱 Seek the wisdom of PB.",
       options: [
         {
-          name: "8ball",
-          description: "Your question...",
+          name: "question",
+          description: "What you seek an answer to.",
           type: 3, // STRING
           required: true,
         },
