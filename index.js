@@ -7,7 +7,9 @@ const Constants = Eris.Constants;
 
 const bot = new Eris.CommandClient(
   process.env.TOKEN,
-  {},
+  {
+    intents: Constants.Intents.all,
+  },
   {
     description: "Pocketbot NG - powered by Eris",
     owner: "Mastastealth",
