@@ -26,9 +26,11 @@ const twitch = new TwitchApi({
   client_secret: process.env.TWITCHSECRET,
 });
 
+let pwgTwitch = null;
+
 async function getStream() {
   const streams = await twitch.getStreams({ channel: "pocketwatch" });
-  return streams.data.length;
+  return streams?.data?.[0];
 }
 
 module.exports = {
@@ -480,14 +482,22 @@ module.exports = {
     let tourneyHrs = [13, 18, 22];
     const { vars, helpers } = bot.PB;
 
-    // Check if Andy is streaming
-    cron.schedule("0 5 20 * * 1", function () {
-      if (getStream()) {
-        bot.createMessage(
-          vars.chan,
-          `${vars.emojis.schatz} Time to stream some **game development.** https://www.twitch.tv/pocketwatch`
-        );
+    // Check if PWG is streaming
+    cron.schedule("0 */15 * * * 1-5", function () {
+      if (!pwgTwitch) {
+        pwgTwitch = getStream();
+
+        if (pwgTwitch?.user_login === "pocketwatch")
+          bot.createMessage(
+            vars.chan,
+            `${vars.emojis.schatz} Time to stream some **game development.** https://www.twitch.tv/pocketwatch`
+          );
       }
+    });
+
+    // Clear
+    cron.schedule("0 0 3,15 * * 1-5", function () {
+      pwgTwitch = null;
     });
 
     // Schedule a new PBC cup
