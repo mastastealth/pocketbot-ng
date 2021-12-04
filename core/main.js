@@ -483,9 +483,9 @@ module.exports = {
     const { vars, helpers } = bot.PB;
 
     // Check if PWG is streaming
-    cron.schedule("0 */15 * * * 1-5", function () {
+    cron.schedule("0 */15 * * * 1-5", async function () {
       if (!pwgTwitch) {
-        pwgTwitch = getStream();
+        pwgTwitch = await getStream();
 
         if (pwgTwitch?.user_login === "pocketwatch")
           bot.createMessage(
