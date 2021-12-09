@@ -483,7 +483,7 @@ module.exports = {
     const { vars, helpers } = bot.PB;
 
     // Check if PWG is streaming
-    cron.schedule("0 */15 * * * 1-5", async function () {
+    cron.schedule("0 */10 * * * 1-5", async function () {
       if (!pwgTwitch) {
         pwgTwitch = await getStream();
 
@@ -558,7 +558,7 @@ module.exports = {
         };
         let face = "";
 
-        console.log(`${lT.user} | ${lT.uid} tweeted.`);
+        console.log(tweet);
 
         switch (lT.uid) {
           case 19382657:
@@ -571,10 +571,11 @@ module.exports = {
 
         // Change channel if TnT
         let chan = lT.uid == 3271155122 ? x.memchan : x.chan;
-        bot.createMessage(
-          chan,
-          `${face} **@${lT.user} just tweeted**:\n http://twitter.com/${lT.user}/status/${lT.id}`
-        );
+        if (!tweet.retweeted_status)
+          bot.createMessage(
+            chan,
+            `${face} **@${lT.user} just tweeted**:\n http://twitter.com/${lT.user}/status/${lT.id}`
+          );
       }
     });
   },
