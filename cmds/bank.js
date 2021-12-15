@@ -44,7 +44,7 @@ module.exports = (bot) => {
           fb.setProp(who, "currency", give);
           fb.setProp(action.member.id, "currency", give * -1);
           return action.createMessage(
-            `**${give}** ${x.emojis.wip} coins successfully transferred.`
+            `**${give}** ${x.emojis.wip} coins successfully transferred to <@${who}>.`
           );
         } else {
           return action.createMessage(
