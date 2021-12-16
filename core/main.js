@@ -487,17 +487,17 @@ module.exports = {
       if (!pwgTwitch) {
         pwgTwitch = await getStream();
 
-        if (pwgTwitch?.user_login === "pocketwatch")
+        if (pwgTwitch?.user_login === "pocketwatch") {
           bot.createMessage(
             vars.chan,
             `${vars.emojis.schatz} Time to stream some **game development.** https://www.twitch.tv/pocketwatch`
           );
-      }
-    });
 
-    // Clear
-    cron.schedule("0 0 3,15 * * 1-5", function () {
-      pwgTwitch = null;
+          setTimeout(() => {
+            pwgTwitch = null;
+          }, 1000 * 60 * 60 * 4); // Clear stream after 4 hours
+        }
+      }
     });
 
     // Schedule a new PBC cup
