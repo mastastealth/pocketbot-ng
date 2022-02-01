@@ -479,7 +479,7 @@ module.exports = {
     }
   },
   pbcCron(bot) {
-    let tourneyHrs = [13, 18, 22];
+    let tourneyHrs = [13, 18, 23];
     const { vars, helpers } = bot.PB;
 
     // Check if PWG is streaming
