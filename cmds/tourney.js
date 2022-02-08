@@ -683,7 +683,7 @@ module.exports = (bot) => {
 
     // Attach link to match
     try {
-      console.log(match.id);
+      console.log(match);
       // console.log("Attaching match replays...");
 
       // await client.matches.add_attach(currentTourney, match.id, { match_attachment: { url: file.url, description: file.filename } });
@@ -730,7 +730,7 @@ module.exports = (bot) => {
       checkRound(msg);
     } catch (err) {
       console.error(err);
-      if (err.includes("Cannot read property 'id' of undefined")) {
+      if (err.includes?.("Cannot read property 'id' of undefined")) {
         msg.channel.createMessage(
           "Hold your ponies! Please submit again once the previous round has finished."
         );
