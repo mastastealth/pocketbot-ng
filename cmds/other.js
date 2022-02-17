@@ -34,6 +34,10 @@ module.exports = (bot) => {
               value: "dir",
             },
             {
+              name: "Change TnT versions (temporary PS4 fix)",
+              value: "branch",
+            },
+            {
               name: "Won't run anymore on W10 and an AMD card",
               value: "amd",
             },
@@ -85,6 +89,9 @@ module.exports = (bot) => {
         case "amd":
           res =
             "Disable fullscreen optimizations as illustrated here: https://media.discordapp.net/attachments/134810918113509376/590269448896774144/unknown.png";
+          break;
+        case "branch":
+          res = `**Change version/branch**\nYou can change your TnT version by checking the game's properties and swapping versions there. In Steam: https://cdn.discordapp.com/attachments/246281054598594560/944009043440173076/branch.gif`;
           break;
         case "other":
           res = `**Other**\nFor any other problems, ping <@${x.stealth}> in <#${x.trouble}>. :sweat_smile:`;
