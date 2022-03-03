@@ -156,7 +156,7 @@ module.exports = (bot) => {
     ) {
       try {
         if (!tid) await client.tournaments.proc_checkin(cTourneyScoped); // Don't process checkins for custom tournies
-        if (tid && args?.[1].startsWith("shuffle"))
+        if (!tid || tid && args?.[1].startsWith("shuffle"))
           await client.participants.randomize(cTourneyScoped);
 
         await client.tournaments.start(cTourneyScoped); // Start tourney
