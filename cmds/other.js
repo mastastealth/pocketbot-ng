@@ -336,6 +336,67 @@ module.exports = (bot) => {
     },
   });
 
+  bot.PB.slashCmds.push({
+    info: {
+      name: "findquote",
+      description:
+        "Searches a string within the quotes and returns the first 5 results found",
+      options: [
+        {
+          name: "string",
+          description: "String to find in quote",
+          type: 3,
+          required: true,
+        },
+      ],
+    },
+    cmd(action) {
+      let results = [];
+      const quoteStr = action.data.options[0].value;
+      const quotes = fb.db.quotes;
+
+      try {
+        quotes.once("value", function (snap) {
+          const n = snap.numChildren();
+          const snapVal = snap.val();
+
+          for (let i = 0; i < n; i++) {
+            let quotes = snapVal[Object.keys(snapVal)[i]];
+
+            if (quotes.hasOwnProperty("quote")) {
+              let q = quotes.quote.toLowerCase();
+              if (q.includes(quoteStr)) {
+                results.push(`#${quotes.id} - ${quotes.quote}`);
+              }
+            }
+
+            if (i + 1 >= n || results.length === 5) {
+              //console.log('Finished search.');
+              if (results.length === 1) {
+                return action.createMessage(
+                  `\`\`\` ${results.join("\n\n")} \`\`\``
+                );
+              } else if (results.length > 1 && results.length < 6) {
+                return action.createMessage(
+                  `First ${results.length} results: \n\`\`\` ${results.join(
+                    "\n\n"
+                  )} \`\`\``
+                );
+              } else {
+                return action.createMessage(
+                  "🕑 No quotes found with that word."
+                );
+              }
+              break;
+            }
+          }
+        });
+      } catch (e) {
+        return action.createMessage(":warning: Quote retrieval failed.");
+      }
+    },
+  });
+
   return {
     register() {
       console.info("Registered other commands.");
