@@ -1,7 +1,7 @@
 const stripIndents = require("common-tags").stripIndents;
 
 module.exports = (bot) => {
-  const { vars: x } = bot.PB;
+  const { vars: x, fb } = bot.PB;
 
   const guides = [
     {
@@ -283,6 +283,56 @@ module.exports = (bot) => {
       return action.createMessage(
         `> ${action.data.options[0].value}\n\n:8ball: says _"${answer[n]}"_`
       );
+    },
+  });
+
+  bot.PB.slashCmds.push({
+    info: {
+      name: "quote",
+      description: "Retrieve a quote from the ancient quote database.",
+      options: [
+        {
+          name: "number",
+          description: "What you seek an answer to.",
+          type: 4, // INTEGER
+          required: true,
+        },
+      ],
+    },
+    cmd(action) {
+      const quoteNum = parseInt(action.data.options[0].value);
+      const quotes = fb.db.quotes;
+
+      try {
+        const qqq = quotes.orderByChild("id").equalTo(quoteNum).limitToLast(1);
+
+        qqq.once("value", function (snap) {
+          if (snap.val() === null)
+            return action.createMessage("🕑 Quote doesn't exist.");
+
+          snap.forEach((cS) => {
+            let thequote = cS.val();
+
+            if (thequote.hasOwnProperty("quote")) {
+              let embed = {
+                title: `Quote #${thequote.id}`,
+                description: thequote.quote,
+                footer: {
+                  text: `Quoted by ${thequote.user} at ${new Date(
+                    thequote.time * 1000
+                  ).toDateString()}`,
+                },
+              };
+
+              return action.createMessage({ embed });
+            } else {
+              return action.createMessage("🕑 Quote doesn't exist.");
+            }
+          });
+        });
+      } catch (e) {
+        return action.createMessage(":warning: Quote retrieval failed.");
+      }
     },
   });
 
