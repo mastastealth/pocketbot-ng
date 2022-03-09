@@ -479,7 +479,7 @@ module.exports = {
     }
   },
   pbcCron(bot) {
-    let tourneyHrs = [13, 18, 23];
+    let tourneyHrs = [12, 17, 22];
     const { vars, helpers } = bot.PB;
 
     // Check if PWG is streaming
@@ -490,7 +490,7 @@ module.exports = {
         if (pwgTwitch?.user_login === "pocketwatch") {
           bot.createMessage(
             vars.chan,
-            `${vars.emojis.schatz} Time to stream some **game development.** https://www.twitch.tv/pocketwatch`
+            `${vars.emojis.schatz} Time to stream some **game development.** https://www.twitch.tv/pocketwatch Today's steam: **${pwgTwitch.title}**`
           );
 
           setTimeout(() => {
