@@ -110,6 +110,7 @@ module.exports = (CONSTS) => {
       schatz: "<:schatz:230393920842891264>",
       masta: "<:masta:230396612797661185>",
       adam: "<:adam:230394845108240384>",
+      joe: "<:joe:916483093412597770>",
 
       //Bots
       ryionbot: "<:ryionbot:247030935021682688>",

@@ -488,9 +488,21 @@ module.exports = {
         pwgTwitch = await getStream();
 
         if (pwgTwitch?.user_login === "pocketwatch") {
+          // const now = new Date();
+          const streamStart = new Date(pwgTwitch.started_at);
+          const streamHalf = streamStart.toLocaleString("en-US", {
+            hour: "numeric",
+            hour12: true,
+          });
+          // const diff = Math.abs(now - streamStart);
+
           bot.createMessage(
             vars.chan,
-            `${vars.emojis.schatz} Time to stream some **game development.** https://www.twitch.tv/pocketwatch Today's steam: **${pwgTwitch.title}**`
+            `${
+              streamHalf.includes("AM") ? vars.emojis.joe : vars.emojis.schatz
+            } Time to stream some **game development.** https://www.twitch.tv/pocketwatch Today's steam: **${
+              pwgTwitch.title
+            }**`
           );
 
           setTimeout(() => {
