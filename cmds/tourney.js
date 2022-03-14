@@ -156,7 +156,7 @@ module.exports = (bot) => {
     ) {
       try {
         if (!tid) await client.tournaments.proc_checkin(cTourneyScoped); // Don't process checkins for custom tournies
-        if (!tid || tid && args?.[1].startsWith("shuffle"))
+        if (!tid || (tid && args?.[1].startsWith("shuffle")))
           await client.participants.randomize(cTourneyScoped);
 
         await client.tournaments.start(cTourneyScoped); // Start tourney
@@ -861,15 +861,19 @@ module.exports = (bot) => {
         return msg.channel.createMessage("🕑 You've already signed up. :tada:");
       }
 
-      // Otherwise, if we're under 16 participants, add to tournament
-      if ((tCount < 16 && !tid) || tid) {
-        const tRole = null; // TODO - Check for custom tRoles
-        addPlayer(msg, cid, tid, tRole);
-      } else {
-        msg.delete?.();
-        msg.channel.createMessage(
-          "🕑 The tournament has reached the maximum number of entries. Hope to see you next week!"
-        );
+      try {
+        // Otherwise, if we're under 16 participants, add to tournament
+        if ((tCount < 16 && !tid) || tid) {
+          const tRole = null; // TODO - Check for custom tRoles
+          addPlayer(msg, cid, tid, tRole);
+        } else {
+          msg.delete?.();
+          msg.channel.createMessage(
+            "🕑 The tournament has reached the maximum number of entries. Hope to see you next week!"
+          );
+        }
+      } catch (e) {
+        console.error(e);
       }
     },
     {
