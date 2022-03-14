@@ -88,11 +88,11 @@ module.exports = (CONSTS) => {
     playground: "172429393501749248",
     modbiz: "180446374704316417",
     modchan: "344957359694807042",
-    wikichan: "235495724542853120",
     techtalk: "200666247694778378",
     trouble: "134810918113509376",
     testing: "246281054598594560",
     pworld: "444662873491505182",
+    house: "952985568915116102",
 
     // Emotes and junk
     emotes: emotes().emotes,

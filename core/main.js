@@ -496,14 +496,18 @@ module.exports = {
           });
           // const diff = Math.abs(now - streamStart);
 
-          bot.createMessage(
-            vars.chan,
-            `${
+          const embed = {
+            title: `${
               streamHalf.includes("AM") ? vars.emojis.joe : vars.emojis.schatz
-            } Time to stream some **game development.** https://www.twitch.tv/pocketwatch Today's steam: **${
-              pwgTwitch.title
-            }**`
-          );
+            } Time to stream some **game development.**`,
+            url: "https://www.twitch.tv/pocketwatch",
+            color: 0x7708d7,
+            description: `Today's steam: **${pwgTwitch.title}**`,
+            thumbnail: {
+              url: "https://static-cdn.jtvnw.net/jtv_user_pictures/4014faac-fcbf-47fd-afa3-5d843052db64-profile_image-70x70.png",
+            },
+          };
+          bot.createMessage(vars.house, { embed });
 
           setTimeout(() => {
             pwgTwitch = null;
