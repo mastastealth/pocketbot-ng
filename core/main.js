@@ -307,26 +307,14 @@ module.exports = {
               name: "Language Detected",
             },
             color: 0xffdc00,
-            description: `:speak_no_evil: <#${msg.channel.id}> | <@${tuser}> said... \`\`\`${msg.content}\`\`\`\n Should I issue a warning? \n ___`,
-            footer: {
-              text: "(React to this message with a thumbs up or down to warn or dismiss, respectively.",
-            },
+            description: `:speak_no_evil: <@${tuser}> said in <#${msg.channel.id}>... \`\`\`${msg.content}\`\`\``,
           };
 
-          embed.fields = [
-            {
-              name: "Channel ID:",
-              value: msg.channel.id,
-              inline: true,
-            },
-            {
-              name: "User ID:",
-              value: tuser,
-              inline: true,
-            },
-          ];
-
-          bot.createMessage(vars.modchan, { embed });
+          bot.PB.extra = { user: tuser, chan: msg.channel.id };
+          bot.createMessage(vars.modchan, {
+            embed,
+            components: [vars.components.ModActionSelect],
+          });
           break;
         }
       }

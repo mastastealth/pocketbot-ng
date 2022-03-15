@@ -1,12 +1,21 @@
 {
-	"words": [
-		" rape","cancer"," aids","cunt",
-		"slut", "whore", "darky",
-		"twink", "shemale ", "igga", 
-		"that's gay", "fk u", "fuck u",
-		"fuck you", " vore"
-	],
-	"nopes": [
-		"nigger"
-	]
+  "words": [
+    " rape",
+    "cancer",
+    " aids",
+    "cunt",
+    "slut",
+    "whore",
+    "darky",
+    "twink",
+    "shemale ",
+    "igga",
+    "that's gay",
+    "fk u",
+    "fuck u",
+    "fuck you",
+    " vore",
+    "aymimadre"
+  ],
+  "nopes": ["nigger"]
 }

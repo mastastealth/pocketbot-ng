@@ -43,6 +43,56 @@ module.exports = (CONSTS) => {
           name: "✅",
         },
       },
+      ModActionSelect: {
+        type: 1,
+        components: [
+          {
+            type: 3,
+            custom_id: "mod_action_pls",
+            options: [
+              {
+                label: "Language Warning",
+                value: "vulgar",
+                description: "For when they're being vulgar",
+                emoji: {
+                  name: "🙈",
+                  id: null,
+                },
+              },
+              {
+                label: "Attitude Warning",
+                value: "pill",
+                description: "For when they need a chill pill",
+                emoji: {
+                  name: "💊",
+                  id: null,
+                },
+              },
+              {
+                label: "Spam Warning",
+                value: "spam",
+                description: "For when they need to talk less",
+                emoji: {
+                  name: "🤐",
+                  id: null,
+                },
+              },
+              {
+                label: "Dismiss",
+                value: "dismiss",
+                description: "Do nothing at all",
+                emoji: {
+                  name: "😴",
+                  id: null,
+                },
+              },
+            ],
+            placeholder: "Choose an action to take!",
+            min_values: 1,
+            max_values: 1,
+          },
+        ],
+      },
     },
     firebasecfg: {
       apiKey: process.env.FBKEY2,
