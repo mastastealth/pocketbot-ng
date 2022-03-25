@@ -397,6 +397,25 @@ module.exports = (bot) => {
     },
   });
 
+  bot.PB.slashCmds.push({
+    info: {
+      name: "followstream",
+      description:
+        "Assign yourself the 'Stream Fan' role to get pinged on discord when twitch stream starts",
+    },
+    async cmd(action) {
+      try {
+        await action.member.addRole(x.streamfan);
+        return action.createMessage(
+          `🕑 You have subscribed to stream notifications. Thanks!`
+        );
+      } catch (e) {
+        console.error(e);
+        return action.createMessage("🕑 Failed to add role.");
+      }
+    },
+  });
+
   return {
     register() {
       console.info("Registered other commands.");
