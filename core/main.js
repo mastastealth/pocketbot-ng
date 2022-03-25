@@ -481,10 +481,16 @@ module.exports = {
           const streamHalf = streamStart.toLocaleString("en-US", {
             hour: "numeric",
             hour12: true,
-            timeZone: "EST"
+            timeZone: "EST",
           });
           // const diff = Math.abs(now - streamStart);
-          console.log(streamHalf);
+          console.log(
+            streamStart.toLocaleString("en-US", {
+              hour: "numeric",
+              hour12: true,
+            }),
+            streamHalf
+          );
 
           const embed = {
             title: `${
