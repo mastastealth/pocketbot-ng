@@ -481,8 +481,10 @@ module.exports = {
           const streamHalf = streamStart.toLocaleString("en-US", {
             hour: "numeric",
             hour12: true,
+            timeZone: "EST"
           });
           // const diff = Math.abs(now - streamStart);
+          console.log(streamHalf);
 
           const embed = {
             title: `${
@@ -490,7 +492,7 @@ module.exports = {
             } Time to stream some **game development.**`,
             url: "https://www.twitch.tv/pocketwatch",
             color: 0x7708d7,
-            description: `Today's steam: **${pwgTwitch.title}**`,
+            description: `Today's stream: **${pwgTwitch.title}**`,
             thumbnail: {
               url: "https://static-cdn.jtvnw.net/jtv_user_pictures/4014faac-fcbf-47fd-afa3-5d843052db64-profile_image-70x70.png",
             },
