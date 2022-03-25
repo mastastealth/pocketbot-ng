@@ -1,6 +1,7 @@
 const cron = require("node-cron");
 const T = require("twit");
 const TwitchApi = require("node-twitch").default;
+const dayjs = require("dayjs");
 
 const cList = [];
 const cMap = {};
@@ -476,26 +477,14 @@ module.exports = {
         pwgTwitch = await getStream();
 
         if (pwgTwitch?.user_login === "pocketwatch") {
-          // const now = new Date();
-          const streamStart = new Date(pwgTwitch.started_at);
-          const streamHalf = streamStart.toLocaleString("en-US", {
-            hour: "numeric",
-            hour12: true,
-            timeZone: "EST",
-          });
-          // const diff = Math.abs(now - streamStart);
-          console.log(
-            streamStart.toLocaleString("en-US", {
-              hour: "numeric",
-              hour12: true,
-            }),
-            streamHalf
-          );
+          const now = new dayjs();
+          const streamStart = new dayjs(pwgTwitch.started_at);
+          const since = now.diff(streamStart, "h");
 
           const embed = {
             title: `${
-              streamHalf.includes("AM") ? vars.emojis.joe : vars.emojis.schatz
-            } Time to stream some **game development.**`,
+              streamStart.hour() < 17 ? vars.emojis.joe : vars.emojis.schatz
+            } Time to stream some **game development**, <@&${vars.streamfan}>!`,
             url: "https://www.twitch.tv/pocketwatch",
             color: 0x7708d7,
             description: `Today's stream: **${pwgTwitch.title}**`,
@@ -503,7 +492,8 @@ module.exports = {
               url: "https://static-cdn.jtvnw.net/jtv_user_pictures/4014faac-fcbf-47fd-afa3-5d843052db64-profile_image-70x70.png",
             },
           };
-          bot.createMessage(vars.house, { embed });
+
+          if (since > 4) bot.createMessage(vars.house, { embed });
 
           setTimeout(() => {
             pwgTwitch = null;
