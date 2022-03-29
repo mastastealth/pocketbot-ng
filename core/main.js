@@ -73,18 +73,28 @@ module.exports = {
           !fromRoles.length ||
           (!fromRoles.includes(x.noob) && !fromRoles.includes(x.member))
         )
-          user.addRole(x.noob, "Add recruit to new player");
+          user.addRole(x.noob, "Add TnT fan to new player");
         // Add to PTG
-        user.addRole(x.ptg, "Went offline, removed PTG");
+        user.addRole(x.ptg, "Adding PTG");
+      } else if (
+        gameName.includes("monaco") ||
+        otherJunk.includes("monaco")
+      ) {
+        if (
+          !fromRoles.length ||
+          (!fromRoles.includes(x.monacofan) && !fromRoles.includes(x.member))
+        )
+          user.addRole(x.monacofan, "Add monaco fan to new player");
+          user.addRole(x.ptg, "Adding PTG");
       } else {
         // If he's not playing/streaming it, and has PTG, remove
         if (fromRoles.includes(x.ptg))
-          user.removeRole(x.ptg, "Not playing TnT, removed PTG");
+          user.removeRole(x.ptg, "Not playing, removed PTG");
       }
     } else {
       // Or if he stopped playing/streaming, remove PTG
       if (fromRoles.includes(x.ptg))
-        user.removeRole(x.ptg, "Not playing TnT, removed PTG");
+        user.removeRole(x.ptg, "Not playing, removed PTG");
       if (fromRoles.includes(x.lfg))
         user.removeRole(x.lfg, "Went offline, removed LFG");
     }
