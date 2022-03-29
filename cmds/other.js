@@ -416,6 +416,25 @@ module.exports = (bot) => {
     },
   });
 
+  bot.PB.slashCmds.push({
+    info: {
+      name: "monacofan",
+      description:
+        "Assign yourself the 'Monaco Fan' role to get some extra permissions",
+    },
+    async cmd(action) {
+      try {
+        await action.member.addRole(x.monacofan);
+        return action.createMessage(
+          `🕑 Thanks for your support, happy heisting!`
+        );
+      } catch (e) {
+        console.error(e);
+        return action.createMessage("🕑 Failed to add role.");
+      }
+    },
+  });
+
   return {
     register() {
       console.info("Registered other commands.");
