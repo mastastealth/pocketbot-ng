@@ -76,16 +76,13 @@ module.exports = {
           user.addRole(x.noob, "Add TnT fan to new player");
         // Add to PTG
         user.addRole(x.ptg, "Adding PTG");
-      } else if (
-        gameName.includes("monaco") ||
-        otherJunk.includes("monaco")
-      ) {
+      } else if (gameName.includes("monaco") || otherJunk.includes("monaco")) {
         if (
           !fromRoles.length ||
           (!fromRoles.includes(x.monacofan) && !fromRoles.includes(x.member))
         )
           user.addRole(x.monacofan, "Add monaco fan to new player");
-          user.addRole(x.ptg, "Adding PTG");
+        user.addRole(x.ptg, "Adding PTG");
       } else {
         // If he's not playing/streaming it, and has PTG, remove
         if (fromRoles.includes(x.ptg))
@@ -489,21 +486,21 @@ module.exports = {
         if (pwgTwitch?.user_login === "pocketwatch") {
           const now = new dayjs();
           const streamStart = new dayjs(pwgTwitch.started_at);
-          const since = now.diff(streamStart, "h");
+          const since = now.diff(streamStart, "m");
 
           const embed = {
             title: `${
               streamStart.hour() < 17 ? vars.emojis.joe : vars.emojis.schatz
-            } Time to stream some **game development**, <@&${vars.streamfan}>!`,
+            } Time to stream some **game development**!`,
             url: "https://www.twitch.tv/pocketwatch",
             color: 0x7708d7,
-            description: `Today's stream: **${pwgTwitch.title}**`,
+            description: `<@&${vars.streamfan}>, today's stream: **${pwgTwitch.title}**`,
             thumbnail: {
               url: "https://static-cdn.jtvnw.net/jtv_user_pictures/4014faac-fcbf-47fd-afa3-5d843052db64-profile_image-70x70.png",
             },
           };
 
-          if (since > 4) bot.createMessage(vars.house, { embed });
+          if (since < 16) bot.createMessage(vars.house, { embed });
 
           setTimeout(() => {
             pwgTwitch = null;
