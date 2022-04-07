@@ -128,6 +128,10 @@ bot.on("interactionCreate", (action) => {
   }
 });
 
+bot.on("error", (err) => {
+  console.error(err);
+});
+
 bot.on("disconnect", () => {
   console.error("Disconnected from Discord...");
 });
