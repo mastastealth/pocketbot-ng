@@ -1,43 +1,31 @@
 module.exports = (bot) => {
   const { vars: x, main, helpers } = bot.PB;
 
-  bot.registerCommand(
-    "say",
-    (msg) => {
-      bot.createMessage(x.chan, msg.content.replace("!say ", ""));
-    },
-    {
+  bot.PB.slashCmds.push({
+    info: {
+      name: "say",
       description: "Allows admin to speak as PB",
-      requirements: {
-        roleIDs: [x.admin],
-      },
-    }
-  );
-
-  // bot.PB.slashCmds.push({
-  //   info: {
-  //     name: "say",
-  //     description: "Allows admin to speak as PB",
-  //     options: [
-  //       {
-  //         name: "channel",
-  //         description: "Select a channel to speak in.",
-  //         type: 7,
-  //         required: true,
-  //       },
-  //       {
-  //         name: "message",
-  //         description: "Message you want to PB to repeat.",
-  //         type: 3,
-  //         required: true,
-  //       }
-  //     ],
-  //   },
-  //   cmd(action) {
-  //     console.log(action)
-  //     bot.createMessage(res);
-  //   },
-  // });
+      options: [
+        {
+          name: "channel",
+          description: "Select a channel to speak in.",
+          type: 7,
+          required: true,
+        },
+        {
+          name: "message",
+          description: "Message you want to PB to repeat.",
+          type: 3,
+          required: true,
+        },
+      ],
+    },
+    cmd(action) {
+      const [chanID, msg] = action.data.options;
+      bot.createMessage(chanID.value, msg.value);
+      return action.createMessage("PB said a thing.");
+    },
+  });
 
   bot.registerCommand(
     "rename",

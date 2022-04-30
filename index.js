@@ -144,7 +144,6 @@ bot.on("presenceUpdate", (user, old) => {
 bot.on("messageCreate", async (msg) => {
   main.checkSelf(msg, bot);
   main.checkSpam(msg, bot);
-  main.checkToxic(msg, bot);
 
   if (!msg.channel.guild)
     console.log(`[DIRECT MESSAGE] ${msg.author.username}: ${msg.content}`);

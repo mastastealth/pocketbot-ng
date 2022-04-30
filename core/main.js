@@ -299,46 +299,6 @@ module.exports = {
       }
     }
   },
-  checkToxic(msg, bot) {
-    const toxic = require("../assets/bleep.json");
-    const tuser = msg.author.id;
-    const uRoles =
-      msg.member && msg.member.roles.length ? msg.member.roles : [];
-    const { vars } = bot.PB;
-
-    // Admins/mods are trusted not to be idiots
-    if (!uRoles.includes(vars.mod) && !uRoles.includes(vars.admin)) {
-      for (let x = 0; x < toxic.words.length; x += 1) {
-        if (msg.content.toLowerCase().includes(toxic.words[x])) {
-          const embed = {
-            author: {
-              name: "Language Detected",
-            },
-            color: 0xffdc00,
-            description: `:speak_no_evil: <@${tuser}> said in <#${msg.channel.id}>... \`\`\`${msg.content}\`\`\``,
-          };
-
-          bot.PB.extra = { user: tuser, chan: msg.channel.id };
-          bot.createMessage(vars.modchan, {
-            embed,
-            components: [vars.components.ModActionSelect],
-          });
-          break;
-        }
-      }
-
-      for (let x = 0; x < toxic.nopes.length; x += 1) {
-        if (msg.content.toLowerCase().includes(toxic.nopes[x])) {
-          msg.delete();
-          bot.createMessage(
-            msg.channel.id,
-            `<@${tuser}>, you are going to be muted for the next 10 minutes and banned if you try that again.`
-          );
-          module.exports.muteUser(msg, bot, "Toxic language.", 10);
-        }
-      }
-    }
-  },
   async muteUser(msg, bot, warning, time = 2, admin = null) {
     const { vars } = bot.PB;
     const private = await msg.author.getDMChannel();
