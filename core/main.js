@@ -92,8 +92,6 @@ module.exports = {
       // Or if he stopped playing/streaming, remove PTG
       if (fromRoles.includes(x.ptg))
         user.removeRole(x.ptg, "Not playing, removed PTG");
-      if (fromRoles.includes(x.lfg))
-        user.removeRole(x.lfg, "Went offline, removed LFG");
     }
   },
   countdown({ bot, msg, count, txt = false }) {
