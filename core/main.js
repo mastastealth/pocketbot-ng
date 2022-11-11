@@ -293,7 +293,7 @@ module.exports = {
         // Trim spam list every 2s
         setTimeout(function () {
           cList.splice(cList.indexOf(userID), 1);
-        }, 2000);
+        }, 1700);
       }
     }
   },
@@ -433,7 +433,7 @@ module.exports = {
     }
   },
   pbcCron(bot) {
-    let tourneyHrs = [12, 17, 22];
+    let tourneyHrs = [12, 18, 23];
     const { vars, helpers } = bot.PB;
 
     // Check if PWG is streaming
