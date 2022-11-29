@@ -452,13 +452,13 @@ module.exports = {
             } Time to stream some **game development**!`,
             url: "https://www.twitch.tv/pocketwatch",
             color: 0x7708d7,
-            description: `<@&${vars.streamfan}>, today's stream: **${pwgTwitch.title}**`,
+            description: `Today's stream: **${pwgTwitch.title}**`,
             thumbnail: {
               url: "https://static-cdn.jtvnw.net/jtv_user_pictures/4014faac-fcbf-47fd-afa3-5d843052db64-profile_image-70x70.png",
             },
           };
 
-          if (since < 16) bot.createMessage(vars.house, { embed });
+          if (since < 16) bot.createMessage(vars.house, { content: `<@&${vars.streamfan}>`, embed });
 
           setTimeout(() => {
             pwgTwitch = null;
