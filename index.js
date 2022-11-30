@@ -41,7 +41,7 @@ bot.PB.fb = require("./core/firebase")(bot);
 
 bot.on("ready", () => {
   console.log(
-    `Bot logged in ${
+    `Bot has logged in ${
       process.env.LOCALTEST ? "locally" : "online"
     } successfully.`
   );
