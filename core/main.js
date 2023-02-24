@@ -235,60 +235,60 @@ module.exports = {
 
         let c = cList.filter((u) => userID).length; // Check how many messages user has posted recently
 
-        if (c === 3) {
-          if (!spammer.includes(userID)) {
-            // Record warning, auto delete after 2 min. for noobs, 30s for roled
-            spammer.push(userID);
-            const time = speakerRoles.length ? 30000 : 1000 * 60 * 2;
-            setTimeout(function () {
-              spammer.splice(spammer.indexOf(userID), 1);
-            }, time);
+        // if (c === 3) {
+        //   if (!spammer.includes(userID)) {
+        //     // Record warning, auto delete after 2 min. for noobs, 30s for roled
+        //     spammer.push(userID);
+        //     const time = speakerRoles.length ? 30000 : 1000 * 60 * 2;
+        //     setTimeout(function () {
+        //       spammer.splice(spammer.indexOf(userID), 1);
+        //     }, time);
 
-            // Cut channel messages in half to allow a response
-            if (cMap[chanID].filter((u) => u === userID).length === 4) {
-              cMap[chanID].pop();
-              cMap[chanID].pop();
-            }
+        //     // Cut channel messages in half to allow a response
+        //     if (cMap[chanID].filter((u) => u === userID).length === 4) {
+        //       cMap[chanID].pop();
+        //       cMap[chanID].pop();
+        //     }
 
-            cList.splice(cList.indexOf(userID), 1);
-            cList.splice(cList.indexOf(userID), 1);
+        //     cList.splice(cList.indexOf(userID), 1);
+        //     cList.splice(cList.indexOf(userID), 1);
 
-            // Warning
-            const v = [
-              `Take it easy on the keyboard <@${userID}>. :open_hands: `,
-              `<@${userID}> shift + enter is your friend!`,
-              `<@${userID}> take a chill pill. :pill:`,
-              `Calm down <@${userID}>, typing isn't a race. :smirk:`,
-            ];
-            const n = Math.floor(Math.random() * 4);
+        //     // Warning
+        //     const v = [
+        //       `Take it easy on the keyboard <@${userID}>. :open_hands: `,
+        //       `<@${userID}> shift + enter is your friend!`,
+        //       `<@${userID}> take a chill pill. :pill:`,
+        //       `Calm down <@${userID}>, typing isn't a race. :smirk:`,
+        //     ];
+        //     const n = Math.floor(Math.random() * 4);
 
-            bot.createMessage(msg.channel.id, v[n]);
-          } else {
-            // 2nd warning = automute
-            module.exports.muteUser(msg, bot, "Did not heed spam warning.");
+        //     bot.createMessage(msg.channel.id, v[n]);
+        //   } else {
+        //     // 2nd warning = automute
+        //     module.exports.muteUser(msg, bot, "Did not heed spam warning.");
 
-            // Clear out prev. spam counts
-            cList.splice(cList.indexOf(userID), 1);
-            cList.splice(cList.indexOf(userID), 1);
-            cList.splice(cList.indexOf(userID), 1);
-          }
-        } else if (
-          (c > 4 && !speakerRoles.length) ||
-          (c > 6 && speakerRoles.length)
-        ) {
-          bot.createMessage(
-            `<@${userID}>, you are going to be muted for the next 2 minutes. Please adjust your chat etiquette.`
-          );
+        //     // Clear out prev. spam counts
+        //     cList.splice(cList.indexOf(userID), 1);
+        //     cList.splice(cList.indexOf(userID), 1);
+        //     cList.splice(cList.indexOf(userID), 1);
+        //   }
+        // } else if (
+        //   (c > 4 && !speakerRoles.length) ||
+        //   (c > 6 && speakerRoles.length)
+        // ) {
+        //   bot.createMessage(
+        //     `<@${userID}>, you are going to be muted for the next 2 minutes. Please adjust your chat etiquette.`
+        //   );
 
-          // Add them to mute role, and remove in 2 minutes
-          module.exports.muteUser(msg, bot, "Too many consecutive messages.");
+        //   // Add them to mute role, and remove in 2 minutes
+        //   module.exports.muteUser(msg, bot, "Too many consecutive messages.");
 
-          // Clear out prev. spam counts
-          cList.splice(cList.indexOf(userID), 1);
-          cList.splice(cList.indexOf(userID), 1);
-          cList.splice(cList.indexOf(userID), 1);
-          cList.splice(cList.indexOf(userID), 1);
-        }
+        //   // Clear out prev. spam counts
+        //   cList.splice(cList.indexOf(userID), 1);
+        //   cList.splice(cList.indexOf(userID), 1);
+        //   cList.splice(cList.indexOf(userID), 1);
+        //   cList.splice(cList.indexOf(userID), 1);
+        // }
 
         // Trim spam list every 2s
         setTimeout(function () {
