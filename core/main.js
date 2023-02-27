@@ -184,7 +184,7 @@ module.exports = {
 
       // Ignore on debug, flip to true if need to test
       if (!process.env.LOCALTEST) {
-        if (!speaker) return false; // Necessary??
+        if (!speaker) return false; // Necessary?
 
         // Running user list of past 4 messages per channel
         if (!cMap[chanID]) cMap[chanID] = [];
