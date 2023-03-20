@@ -174,7 +174,7 @@ try {
   // Extra Pocketbot Tasks
   // ===================================
   main.pbcCron(bot);
-  main.lucille(bot); // Twitter
+  // main.lucille(bot); // Twitter
 } catch (e) {
   console.error(e);
 }
