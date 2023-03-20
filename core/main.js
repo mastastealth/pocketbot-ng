@@ -1,5 +1,4 @@
 const cron = require("node-cron");
-// const T = require("twit");
 const TwitchApi = require("node-twitch").default;
 const dayjs = require("dayjs");
 
@@ -7,21 +6,11 @@ const cList = [];
 const cMap = {};
 const spammer = [];
 
-// const twitter = new T({
-//   consumer_key: process.env.TWITKEY,
-//   consumer_secret: process.env.TWITTOKEN,
-//   access_token: process.env.TWITATOKEN,
-//   access_token_secret: process.env.TWITSECRET,
-// });
-
 const watchList = [
   "19382657", //@andyschatz
   "111136741", //@PocketwatchG
   "3271155122", //@ToothAndTail
 ];
-const stream = process.env.LOCALTEST
-  ? null
-  : twitter.stream("statuses/filter", { follow: watchList });
 
 const twitch = new TwitchApi({
   client_id: process.env.TWITCHID,
@@ -508,43 +497,4 @@ module.exports = {
       }
     );
   },
-  // lucille(bot) {
-  //   const { vars: x } = bot.PB;
-  //   if (!stream) return false;
-
-  //   stream.on("tweet", function (tweet) {
-  //     //If Tracked User
-  //     if (
-  //       watchList.includes(tweet.user.id_str) &&
-  //       tweet.in_reply_to_status_id === null
-  //     ) {
-  //       const lT = {
-  //         user: tweet.user.screen_name,
-  //         uid: tweet.user.id,
-  //         tweet: tweet.text,
-  //         id: tweet.id_str,
-  //       };
-  //       let face = "";
-
-  //       console.log(tweet);
-
-  //       switch (lT.uid) {
-  //         case 19382657:
-  //           face = x.emojis.schatz;
-  //           break;
-  //         case 3271155122:
-  //           face = x.emojis.hopper;
-  //           break;
-  //       }
-
-  //       // Change channel if TnT
-  //       let chan = lT.uid == 3271155122 ? x.memchan : x.chan;
-  //       if (!tweet.retweeted_status)
-  //         bot.createMessage(
-  //           chan,
-  //           `${face} **@${lT.user} just tweeted**:\n http://twitter.com/${lT.user}/status/${lT.id}`
-  //         );
-  //     }
-  //   });
-  // },
 };

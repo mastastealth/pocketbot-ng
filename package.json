@@ -1,6 +1,6 @@
 {
   "name": "pocketbot-ng",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A whole new pocketbot",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,6 @@
     "eris": "^0.16.1",
     "firebase": "^8.6.2",
     "node-cron": "~1.2.1",
-    "node-twitch": "^0.4.5",
-    "twit": "~2.2.11"
+    "node-twitch": "^0.4.5"
   }
 }
