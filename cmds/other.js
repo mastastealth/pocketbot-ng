@@ -16,7 +16,7 @@ module.exports = (bot) => {
       inline: true,
     },
     {
-      name: ":tntmole: The Ultimate Guide to Mole Rushing",
+      name: `${x.emojis.mole} The Ultimate Guide to Mole Rushing (2023)`,
       value: "[Link to UrbaneOlive's guide on Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=2937378869)",
       inline: true
     }
