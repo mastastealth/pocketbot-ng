@@ -15,6 +15,11 @@ module.exports = (bot) => {
         "[Link to EELuminatus' guide on Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=1586529908)",
       inline: true,
     },
+    {
+      name: ":tntmole: The Ultimate Guide to Mole Rushing",
+      value: "[Link to UrbaneOlive's guide on Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=2937378869)",
+      inline: true
+    }
   ];
 
   bot.PB.slashCmds.push({
