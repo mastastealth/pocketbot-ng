@@ -167,7 +167,6 @@ try {
   info.register();
   // TODO - quotes.register();
   other.register();
-
   bot.connect();
 
   // ===================================
