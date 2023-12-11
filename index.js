@@ -45,6 +45,7 @@ bot.on("ready", () => {
       process.env.LOCALTEST ? "locally" : "online"
     } successfully.`
   );
+
   console.log(Object.keys(bot.commands));
 
   // Register all imported commands
