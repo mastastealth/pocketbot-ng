@@ -762,7 +762,7 @@ module.exports = (bot) => {
     },
     {
       description: "Creates a new Pocketbot or Community Cup",
-      cooldown: 1000 * 60 * 60,
+      cooldown: 1000 * 60 * 60, // 1 hr
       cooldownMessage: "One cup at a time bro, give me a break.",
       cooldownReturns: 2,
     }
@@ -776,11 +776,6 @@ module.exports = (bot) => {
     },
     {
       description: "Starts a Pocketbot Cup",
-      requirements: {
-        custom(msg) {
-          return helpers.hasModPerms(msg.member.roles);
-        },
-      },
     }
   );
 
