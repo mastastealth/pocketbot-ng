@@ -58,7 +58,6 @@ bot.on("ready", () => {
 
 bot.on("interactionCreate", (action) => {
   const { message, member } = action;
-  // console.log(action, message);
 
   if (action instanceof Eris.ComponentInteraction) {
     const id = action.data.custom_id;
