@@ -87,7 +87,6 @@ module.exports = {
   countdown({ bot, msg, count, txt = false }) {
     const t = txt || msg.content;
     const chan = msg.channel.id;
-
     if (count > -1) {
       setTimeout(function () {
         if (t.includes("🕗")) {
