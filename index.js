@@ -90,8 +90,9 @@ bot.on("interactionCreate", (action) => {
 
     switch (id) {
       case "pbc-signup-v2":
+        action.acknowledge();
         bot.PB.helpers.exeCmd("signup", { action, message });
-        return true;
+        return;
       case "mod_action_pls":
         // TODO - Log in modhistory
 
