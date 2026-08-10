@@ -46,7 +46,7 @@ bot.on("ready", () => {
     } successfully.`
   );
 
-  console.log(Object.keys(bot.commands));
+  // console.log(Object.keys(bot.commands));
 
   // Register all imported commands
   bot.PB.slashCmds.forEach((cmd) => {
