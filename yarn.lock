@@ -445,10 +445,10 @@
     "jsbn" "~0.1.0"
     "safer-buffer" "^2.1.0"
 
-"eris@^0.16.1":
-  "integrity" "sha512-fqjgaddSvUlUjA7s85OvZimLrgCwX58Z6FXOIxdNFJdT6XReJ/LOWZKdew2CaalM8BvN2JKzn98HmKYb3zMhKg=="
-  "resolved" "https://registry.npmjs.org/eris/-/eris-0.16.1.tgz"
-  "version" "0.16.1"
+"eris@^0.17.2":
+  "integrity" "sha512-OzffDSL81VooFXfRn56ienSg7J6fagoN8WdkmCHjn0B9a4jUA3bVouMztQiaXT54jHV5jaX9D0mJ/b9/0mFoVg=="
+  "resolved" "https://registry.npmjs.org/eris/-/eris-0.17.2.tgz"
+  "version" "0.17.2"
   dependencies:
     "ws" "^8.2.3"
   optionalDependencies:
