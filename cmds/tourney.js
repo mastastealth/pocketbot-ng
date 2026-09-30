@@ -977,12 +977,6 @@ module.exports = (bot) => {
     }
   );
 
-  bot.registerCommand("tourney", (msg) => {}, {
-    description: "Registers a custom tournament for the community",
-  });
-  // TODO - bot.registerCommand("starttourney", (msg)=> {});
-  // TODO - bot.registerCommand("endtourney", (msg)=> {});
-
   bot.registerCommand("challonge", (msg) => {
     // const cid = args[0];
     msg.delete();
@@ -1007,22 +1001,32 @@ module.exports = (bot) => {
     }
   });
 
-  bot.registerCommand(
-    "bracket",
-    async (msg) => {
-      msg.delete();
-
-      let t = await getTourneyData();
-      let tURL = t.full_challonge_url;
-
-      msg.channel.createMessage(
-        `:trophy: The current tournament bracket can be found at: ${tURL}`
-      );
+  bot.PB.slashCmds.push({
+    info: {
+      name: "bracket",
+      description: "Get a link to the current tournament bracket.",
     },
-    {
-      aliases: ["brackets"],
-    }
-  );
+    async cmd(action) {
+      // resumeTourney() may not have finished yet, or no cup is running
+      if (!currentTourney) {
+        return action.createMessage(
+          "There is no tournament running right now, so there is no bracket to show."
+        );
+      }
+
+      try {
+        const t = await getTourneyData();
+        return action.createMessage(
+          `:trophy: The current tournament bracket can be found at: ${t.full_challonge_url}`
+        );
+      } catch (e) {
+        console.error(e);
+        return action.createMessage(
+          "Could not reach Challonge for the bracket. Try again in a moment."
+        );
+      }
+    },
+  });
 
   // ====================================
   // Do I need these commands anymore?
