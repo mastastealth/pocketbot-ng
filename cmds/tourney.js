@@ -977,9 +977,6 @@ module.exports = (bot) => {
     }
   );
 
-  // TODO - bot.registerCommand("starttourney", (msg)=> {});
-  // TODO - bot.registerCommand("endtourney", (msg)=> {});
-
   bot.registerCommand("challonge", (msg) => {
     // const cid = args[0];
     msg.delete();
