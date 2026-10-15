@@ -313,6 +313,16 @@ module.exports = (bot) => {
       );
 
       console.log("Finished tournament.");
+      // Award champion role to 1st place winner
+      try {
+        const winner = bot.guilds.get(x.chan).members.get(winners["1"]);
+        if (winner) {
+          await winner.addRole(x.champ, "PBC Tournament Champion");
+          console.log(`Awarded champion role to ${winners["1"]}`);
+        }
+      } catch (e) {
+        console.error(e);
+      }
       resetTourneyVars();
     } catch (err) {
       console.error(err);

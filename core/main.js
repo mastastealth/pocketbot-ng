@@ -480,6 +480,19 @@ module.exports = {
       `0 0 ${tourneyHrs[0]},${tourneyHrs[1]},${tourneyHrs[2]} * * 1`,
       function () {
         console.log("Creating Cup.", "OK");
+        // Remove champion role from members who have it
+        try {
+          const guild = bot.guilds.get(vars.chan);
+          const champMembers = guild?.members.filter((m) => m.roles.includes(vars.champ));
+          if (champMembers.size) {
+            champMembers.forEach((m) => {
+              m.removeRole(vars.champ, "New PBC started, champ role reset");
+            });
+            console.log(`Removed champion role from ${champMembers.size} member(s).`);
+          }
+        } catch (e) {
+          console.error(e);
+        }
         helpers.exeCmd("makecup");
 
         const time = new Date();
